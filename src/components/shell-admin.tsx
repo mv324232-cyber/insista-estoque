@@ -109,7 +109,7 @@ export function ShellAdmin({ children }: { children: ReactNode }) {
       </nav>
 
       <Dialogo aberto={mais} aoFechar={() => setMais(false)} titulo="Menu">
-        <div className="grid gap-2">
+        <div className="grid grid-cols-1 gap-2">
           {ITENS.filter((i) => !("principal" in i)).map((i) => (
             <Link
               key={i.href}

@@ -114,7 +114,7 @@ export default function Painel() {
       </div>
 
       {/* KPIs */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {PERIODOS.map((p) => {
           const x = resumos[p.id];
           return (
@@ -161,13 +161,13 @@ export default function Painel() {
         </Link>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           <p className="text-sm font-semibold text-suave">
             Rankings e pagamentos de: <strong className="text-texto">{PERIODOS.find((p) => p.id === periodo)?.rotulo}</strong>{" "}
             (toque num cartão acima para trocar)
           </p>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Cartao>
               <h2 className="mb-3 font-marca text-xl font-bold uppercase tracking-wide">Ranking de vendedores</h2>
               <BarrasHorizontais

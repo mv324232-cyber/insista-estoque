@@ -35,21 +35,21 @@ const USUARIOS = [
 ];
 
 const PRODUTOS = [
-  { sku: "INS-RAIZ-VM", nome: "Raiz Forte", cor: "Verde Musgo", preco: 129.9, minimo: 3, foto: "raiz-forte.png",
+  { sku: "INS-RAIZ-VM", codigo: "101", nome: "Raiz Forte", cor: "Verde Musgo", preco: 129.9, minimo: 3, foto: "raiz-forte.png",
     estoque: { P: 6, M: 14, G: 12, GG: 8, XG: 4 } },
-  { sku: "INS-BOI-MT", nome: "Boiadeiro", cor: "Marrom Terra", preco: 129.9, minimo: 3, foto: "boiadeiro.png",
+  { sku: "INS-BOI-MT", codigo: "102", nome: "Boiadeiro", cor: "Marrom Terra", preco: 129.9, minimo: 3, foto: "boiadeiro.png",
     estoque: { P: 4, M: 10, G: 10, GG: 6, XG: 2 } },
-  { sku: "INS-SAFRA-AR", nome: "Safra Boa", cor: "Areia", preco: 119.9, minimo: 4, foto: "safra-boa.png",
+  { sku: "INS-SAFRA-AR", codigo: "103", nome: "Safra Boa", cor: "Areia", preco: 119.9, minimo: 4, foto: "safra-boa.png",
     estoque: { P: 8, M: 16, G: 14, GG: 10, XG: 5 } },
-  { sku: "INS-PORT-PT", nome: "Porteira Aberta", cor: "Preto", preco: 139.9, minimo: 3, foto: "porteira-aberta.png",
+  { sku: "INS-PORT-PT", codigo: "104", nome: "Porteira Aberta", cor: "Preto", preco: 139.9, minimo: 3, foto: "porteira-aberta.png",
     estoque: { P: 5, M: 12, G: 12, GG: 7, XG: 3 } },
-  { sku: "INS-CAMPO-OF", nome: "Nascer no Campo", cor: "Off-white", preco: 119.9, minimo: 3, foto: "nascer-no-campo.png",
+  { sku: "INS-CAMPO-OF", codigo: "105", nome: "Nascer no Campo", cor: "Off-white", preco: 119.9, minimo: 3, foto: "nascer-no-campo.png",
     estoque: { P: 3, M: 8, G: 9, GG: 5, XG: 1 } },
-  { sku: "INS-TRAT-CC", nome: "Trator Velho", cor: "Cinza Chumbo", preco: 129.9, minimo: 5, foto: "trator-velho.png",
+  { sku: "INS-TRAT-CC", codigo: "106", nome: "Trator Velho", cor: "Cinza Chumbo", preco: 129.9, minimo: 5, foto: "trator-velho.png",
     estoque: { P: 2, M: 6, G: 4, GG: 3, XG: 0 } },
-  { sku: "INS-RAIZ-PLUS", nome: "Raiz Forte Plus", cor: "Preto", preco: 149.9, minimo: 2, foto: null,
+  { sku: "INS-RAIZ-PLUS", codigo: "107", nome: "Raiz Forte Plus", cor: "Preto", preco: 149.9, minimo: 2, foto: null,
     estoque: { G1: 4, G2: 5, G3: 3, G4: 2, G5: 1 } },
-  { sku: "INS-ROD25-VN", nome: "Rodeio 2025 (edição antiga)", cor: "Vinho", preco: 99.9, minimo: 0, foto: null,
+  { sku: "INS-ROD25-VN", codigo: "90", nome: "Rodeio 2025 (edição antiga)", cor: "Vinho", preco: 99.9, minimo: 0, foto: null,
     estoque: { P: 0, M: 2, G: 1, GG: 0, XG: 0 }, inativo: true },
 ];
 
@@ -122,7 +122,7 @@ async function garantirProdutos(dono) {
     const foto_url = await enviarFoto(p.foto);
     const { data, error } = await dono
       .from("produtos")
-      .insert({ sku: p.sku, nome: p.nome, cor: p.cor, preco: p.preco, estoque_minimo: p.minimo, foto_url, tamanhos: Object.keys(p.estoque) })
+      .insert({ sku: p.sku, codigo: p.codigo, nome: p.nome, cor: p.cor, preco: p.preco, estoque_minimo: p.minimo, foto_url, tamanhos: Object.keys(p.estoque) })
       .select("id")
       .single();
     if (error) throw new Error(`Produto ${p.sku}: ${error.message}`);

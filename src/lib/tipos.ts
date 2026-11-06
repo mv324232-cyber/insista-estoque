@@ -44,6 +44,8 @@ export interface Produto {
   id: string;
   nome: string;
   sku: string;
+  /** código curto opcional (ex.: 101) */
+  codigo: string | null;
   cor: string;
   foto_url: string | null;
   preco: number;
@@ -83,7 +85,7 @@ export interface Venda {
 }
 
 export type VendaDetalhada = Venda & {
-  produto: { nome: string; sku: string; cor: string } | null;
+  produto: { nome: string; sku: string; cor: string; codigo: string | null } | null;
   vendedor: { nome: string; usuario: string } | null;
 };
 
@@ -109,7 +111,7 @@ export interface Resumo {
 }
 
 export const SELECT_VENDA_DETALHADA =
-  "*, produto:produtos(nome, sku, cor), vendedor:perfis!vendas_vendedor_id_fkey(nome, usuario)";
+  "*, produto:produtos(nome, sku, cor, codigo), vendedor:perfis!vendas_vendedor_id_fkey(nome, usuario)";
 
 export function estoqueVazio(tamanhos: string[] = []): Record<Tamanho, number> {
   return Object.fromEntries(tamanhos.map((t) => [t, 0]));

@@ -61,7 +61,7 @@ export default function PaginaVendedores() {
       ) : lista.length === 0 ? (
         <Vazio titulo="Nenhum vendedor cadastrado" />
       ) : (
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {lista.map((p) => (
             <div key={p.id} className={cx("rounded-tema-g border border-borda bg-superficie p-4", !p.ativo && "opacity-60")}>
               <div className="flex items-start justify-between gap-2">

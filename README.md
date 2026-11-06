@@ -67,6 +67,7 @@ npm install
 2. Abra **SQL Editor → New query** e rode, **em ordem e uma vez cada**, os arquivos da pasta `supabase/migrations/`:
    1. `20261106000000_schema_inicial.sql` — tabelas, regras, políticas de segurança (RLS), Realtime e bucket de fotos;
    2. `20261107000000_tamanhos_livres.sql` — tamanhos digitados por produto.
+   3. `20261108000000_codigo_produto.sql` — código do produto (opcional).
 
    Cole **todo** o conteúdo de cada arquivo e clique em **Run**.
 
@@ -201,6 +202,7 @@ O ícone da Insista aparece na tela inicial e o app abre em tela cheia, como um 
 supabase/
   migrations/…_schema_inicial.sql   # tabelas, funções, RLS, auditoria, realtime, storage
   migrations/…_tamanhos_livres.sql  # tamanhos digitados por produto
+  migrations/…_codigo_produto.sql   # código curto do produto
 scripts/
   seed.mjs                          # dados de exemplo
   criar-admin.mjs                   # cria o dono em produção

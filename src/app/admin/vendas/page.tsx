@@ -104,11 +104,12 @@ function Vendas() {
     setExportando(tipo);
     try {
       const todas = await buscarTodas(filtros);
-      const colunas = ["Data", "Vendedor", "Produto", "SKU", "Tam.", "Qtd", "Preço tabela", "Valor unit.", "Total", "Pagamento", "Status", "Observação"];
+      const colunas = ["Data", "Vendedor", "Produto", "Código", "SKU", "Tam.", "Qtd", "Preço tabela", "Valor unit.", "Total", "Pagamento", "Status", "Observação"];
       const linhas = todas.map((v) => [
         dataHora(v.vendida_em),
         v.vendedor?.nome ?? "",
         v.produto?.nome ?? "",
+        v.produto?.codigo ?? "",
         v.produto?.sku ?? "",
         v.tamanho,
         v.quantidade,
@@ -136,7 +137,7 @@ function Vendas() {
           ],
           colunas,
           linhas,
-          numericas: [5, 6, 7, 8],
+          numericas: [6, 7, 8, 9],
         });
       }
     } catch (e) {
@@ -212,6 +213,7 @@ function Vendas() {
                       <td className="px-3 py-2.5">
                         <span className={cx("font-semibold", v.status === "cancelada" && "line-through")}>{v.produto?.nome}</span>
                         <span className="block text-xs text-suave">
+                          {v.produto?.codigo ? `Cód. ${v.produto.codigo} · ` : ""}
                           {v.produto?.sku}
                           {v.observacao ? ` · ${v.observacao}` : ""}
                         </span>

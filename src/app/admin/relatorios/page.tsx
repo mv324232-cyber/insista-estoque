@@ -207,7 +207,7 @@ export default function Relatorios() {
             <p className="mt-2 text-xs text-suave">O percentual de comissão de cada vendedor é definido em Vendedores.</p>
           </Cartao>
 
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Cartao>
               <h2 className="mb-3 font-marca text-xl font-bold uppercase tracking-wide">Por design</h2>
               <table className="num w-full text-left text-sm">

@@ -94,7 +94,7 @@ export default function PaginaEstoque() {
   const lista = useMemo(() => {
     const termo = busca.trim().toLowerCase();
     return (produtos ?? []).filter((p) => {
-      if (termo && !p.nome.toLowerCase().includes(termo) && !p.sku.toLowerCase().includes(termo)) return false;
+      if (termo && ![p.nome, p.sku, p.codigo ?? ""].some((x) => x.toLowerCase().includes(termo))) return false;
       if (soBaixo && tamanhosBaixos(p).length === 0) return false;
       return true;
     });
@@ -129,7 +129,7 @@ export default function PaginaEstoque() {
 
       <div className="relative mb-3">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-suave" />
-        <Campo placeholder="Buscar por design ou SKU" value={busca} onChange={(e) => setBusca(e.target.value)} className="pl-10" />
+        <Campo placeholder="Buscar por design, código ou SKU" value={busca} onChange={(e) => setBusca(e.target.value)} className="pl-10" />
       </div>
 
       {!produtos ? (
@@ -145,6 +145,7 @@ export default function PaginaEstoque() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-bold leading-tight">{p.nome}</p>
                   <p className="text-xs text-suave">
+                    {p.codigo ? `Cód. ${p.codigo} · ` : ""}
                     {p.sku} · {p.cor || "—"} · alerta ≤ {p.estoque_minimo}
                   </p>
                 </div>

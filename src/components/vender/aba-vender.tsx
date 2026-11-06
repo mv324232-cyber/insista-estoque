@@ -60,7 +60,7 @@ export function ListaProdutos({
     return produtos.filter((p) => {
       if (design && p.nome !== design) return false;
       if (!termo) return true;
-      const alvo = `${p.nome} ${p.sku} ${p.cor} ${p.tamanhos.join(" ")}`
+      const alvo = `${p.codigo ?? ""} ${p.nome} ${p.sku} ${p.cor} ${p.tamanhos.join(" ")}`
         .toLowerCase()
         .normalize("NFD")
         .replace(/[̀-ͯ]/g, "");
@@ -74,7 +74,7 @@ export function ListaProdutos({
         <Search className="pointer-events-none absolute left-3.5 top-1/2 size-6 -translate-y-1/2 text-suave" />
         <Campo
           type="search"
-          placeholder="Buscar por nome ou SKU"
+          placeholder="Buscar por nome, código ou SKU"
           aria-label="Buscar produto"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
@@ -114,7 +114,7 @@ export function ListaProdutos({
         ) : lista.length === 0 ? (
           <Vazio titulo="Nenhum produto encontrado" />
         ) : (
-          <ul className="grid gap-2.5 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {lista.map((p) => {
               const total = totalEstoque(p.estoque);
               const conteudo = (
@@ -123,6 +123,7 @@ export function ListaProdutos({
                   <div className="min-w-0 flex-1 text-left">
                     <p className="truncate text-lg font-bold leading-tight">{p.nome}</p>
                     <p className="truncate text-sm text-suave">
+                      {p.codigo ? `Cód. ${p.codigo} · ` : ""}
                       {p.cor ? `${p.cor} · ` : ""}
                       {p.sku}
                     </p>
@@ -266,6 +267,7 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
         <div className="min-w-0">
           <p className="truncate text-xl font-bold leading-tight">{produto.nome}</p>
           <p className="truncate text-sm text-suave">
+            {produto.codigo ? `Cód. ${produto.codigo} · ` : ""}
             {produto.cor ? `${produto.cor} · ` : ""}
             {produto.sku}
           </p>

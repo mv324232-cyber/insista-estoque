@@ -4,6 +4,7 @@ export function mensagemErro(erro: unknown): string {
   const e = erro as { message?: string; code?: string; details?: string };
   const msg = e.message ?? String(erro);
   if (e.code === "23505") {
+    if (/codigo/i.test(msg + (e.details ?? ""))) return "Já existe um produto com este código.";
     if (/sku/i.test(msg + (e.details ?? ""))) return "Já existe um produto com este SKU.";
     return "Registro duplicado.";
   }

@@ -40,34 +40,50 @@ export function ProvedorAuth({ children }: { children: ReactNode }) {
   const carregar = useCallback(async () => {
     const sb = supabase();
     const salvo = ler<Perfil | null>(CHAVE_PERFIL, null);
-    let sessaoId: string | null = null;
-    let falhaRede = false;
-    try {
-      const { data, error } = await sb.auth.getSession();
-      sessaoId = data.session?.user.id ?? null;
-      if (error) falhaRede = true;
-    } catch {
-      falhaRede = true;
+
+    // Abre NA HORA com o perfil guardado no aparelho (essencial sem sinal);
+    // a confirmação com o servidor acontece logo abaixo, sem travar a tela.
+    if (salvo) {
+      setPerfil(salvo);
+      setCarregando(false);
     }
 
-    if (!sessaoId) {
-      // Sem internet e com sessão anterior neste aparelho: segue em modo offline.
-      if (salvo && (falhaRede || !navigator.onLine)) {
-        setPerfil(salvo);
-        setSemConfirmacao(true);
-      } else {
-        remover(CHAVE_PERFIL);
-        setPerfil(null);
+    let sessaoId: string | null = null;
+    let falhaRede = !navigator.onLine;
+    if (!falhaRede) {
+      try {
+        const r = await comLimite(sb.auth.getSession(), 5000);
+        if (!r) falhaRede = true;
+        else {
+          sessaoId = r.data.session?.user.id ?? null;
+          if (r.error) falhaRede = true;
+        }
+      } catch {
+        falhaRede = true;
       }
+    }
+
+    if (falhaRede) {
+      // Sem internet: segue com o que está no aparelho (ou pede login, se não houver)
+      setPerfil(salvo);
+      setSemConfirmacao(!!salvo);
       setCarregando(false);
       return;
     }
 
-    const { data, error } = await sb.from("perfis").select("*").eq("id", sessaoId).maybeSingle();
-    if (data) {
-      const p = { ...(data as Perfil), comissao_percentual: Number(data.comissao_percentual) };
+    if (!sessaoId) {
+      remover(CHAVE_PERFIL);
+      setPerfil(null);
+      setSemConfirmacao(false);
+      setCarregando(false);
+      return;
+    }
+
+    const r = await comLimite(sb.from("perfis").select("*").eq("id", sessaoId).maybeSingle(), 6000);
+    if (r?.data) {
+      const p = { ...(r.data as Perfil), comissao_percentual: Number(r.data.comissao_percentual) };
       if (!p.ativo) {
-        await sb.auth.signOut();
+        await sb.auth.signOut({ scope: "local" });
         remover(CHAVE_PERFIL);
         setPerfil(null);
       } else {
@@ -75,11 +91,11 @@ export function ProvedorAuth({ children }: { children: ReactNode }) {
         setPerfil(p);
         setSemConfirmacao(false);
       }
-    } else if (error && salvo?.id === sessaoId) {
-      // provavelmente sem conexão: usa o perfil guardado
+    } else if (salvo?.id === sessaoId) {
+      // sinal fraco/sem resposta: mantém o perfil guardado
       setPerfil(salvo);
       setSemConfirmacao(true);
-    } else {
+    } else if (r && !r.error) {
       setPerfil(null);
     }
     setCarregando(false);
@@ -121,6 +137,14 @@ export function ProvedorAuth({ children }: { children: ReactNode }) {
 }
 
 const semConfirmacaoRef = { atual: false };
+
+/** Resolve com o resultado, ou null se demorar mais que `ms` (sinal ruim). */
+function comLimite<T>(promessa: PromiseLike<T>, ms: number): Promise<T | null> {
+  return Promise.race([
+    Promise.resolve(promessa),
+    new Promise<null>((r) => setTimeout(() => r(null), ms)),
+  ]);
+}
 
 /** Só renderiza o conteúdo para usuários logados com o papel permitido. */
 export function Protegido({ papeis, children }: { papeis: Papel[]; children: ReactNode }) {

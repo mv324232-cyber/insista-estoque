@@ -61,6 +61,19 @@ const venda = (cliente, extra = {}) =>
     ...extra,
   });
 
+test("código do produto: normaliza, é único e opcional", async () => {
+  const cod = `c${Date.now() % 1e6}`;
+  const a = await dono.from("produtos").update({ codigo: `  ${cod} ` }).eq("id", produto.id).select("codigo").single();
+  assert.ifError(a.error);
+  assert.equal(a.data.codigo, cod.toUpperCase());
+  const b = await dono.from("produtos").insert({ nome: "Outro", sku: `${SKU}-2`, preco: 1, tamanhos: ["U"], codigo: cod, ativo: false });
+  assert.ok(b.error, "aceitou código repetido");
+  assert.equal(b.error.code, "23505");
+  const c = await dono.from("produtos").insert({ nome: "Sem código", sku: `${SKU}-3`, preco: 1, tamanhos: ["U"], codigo: "", ativo: false }).select("codigo").single();
+  assert.ifError(c.error);
+  assert.equal(c.data.codigo, null);
+});
+
 test("anônimo não lê nada", async () => {
   for (const t of ["produtos", "estoque", "vendas", "perfis", "auditoria"]) {
     const { data } = await anon.from(t).select("*").limit(1);

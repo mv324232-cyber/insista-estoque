@@ -126,7 +126,7 @@ export default function PaginaVender() {
       </nav>
 
       <Dialogo aberto={menu} aoFechar={() => setMenu(false)} titulo={perfil?.nome ?? "Menu"}>
-        <div className="grid gap-2">
+        <div className="grid grid-cols-1 gap-2">
           {perfil?.papel === "admin" && (
             <Link
               href="/admin"

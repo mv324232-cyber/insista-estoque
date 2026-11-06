@@ -51,7 +51,8 @@ export default function PaginaProdutos() {
     return (produtos ?? []).filter(
       (p) =>
         (filtro === "todos" || (filtro === "ativos" ? p.ativo : !p.ativo)) &&
-        (!termo || p.nome.toLowerCase().includes(termo) || p.sku.toLowerCase().includes(termo) || p.cor.toLowerCase().includes(termo)),
+        (!termo ||
+          [p.nome, p.sku, p.cor, p.codigo ?? ""].some((x) => x.toLowerCase().includes(termo))),
     );
   }, [produtos, busca, filtro]);
 
@@ -78,7 +79,7 @@ export default function PaginaProdutos() {
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-suave" />
           <Campo
-            placeholder="Buscar por design, SKU ou cor"
+            placeholder="Buscar por design, código, SKU ou cor"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             className="pl-10"
@@ -96,7 +97,7 @@ export default function PaginaProdutos() {
       ) : lista.length === 0 ? (
         <Vazio titulo="Nenhum produto encontrado" />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {lista.map((p) => {
             const total = totalEstoque(p.estoque);
             const baixo = tamanhosBaixos(p);
@@ -107,6 +108,7 @@ export default function PaginaProdutos() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-lg font-bold leading-tight">{p.nome}</p>
                     <p className="text-sm text-suave">
+                      {p.codigo && <strong className="text-texto">Cód. {p.codigo} · </strong>}
                       {p.sku} · {p.cor || "—"}
                     </p>
                     <p className="num mt-1 font-bold">{moeda(p.preco)}</p>
@@ -171,11 +173,14 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
   const avisar = useAviso();
   const [nome, setNome] = useState(produto?.nome ?? "");
   const [sku, setSku] = useState(produto?.sku ?? "");
+  const [codigo, setCodigo] = useState(produto?.codigo ?? "");
   const [cor, setCor] = useState(produto?.cor ?? "");
   const [preco, setPreco] = useState(produto ? String(produto.preco).replace(".", ",") : "");
   const [minimo, setMinimo] = useState(String(produto?.estoque_minimo ?? 3));
   const [ativo, setAtivo] = useState(produto?.ativo ?? true);
-  const [foto, setFoto] = useState<File | null>(null);
+  // foto já reduzida (feito ao escolher, para não travar a tela depois)
+  const [foto, setFoto] = useState<Blob | null>(null);
+  const [preparandoFoto, setPreparandoFoto] = useState(false);
   const [previa, setPrevia] = useState<string | null>(produto?.foto_url ?? null);
   const [tamanhos, setTamanhos] = useState<Tamanho[]>(produto?.tamanhos ?? []);
   const [inicial, setInicial] = useState<Record<Tamanho, string>>({});
@@ -185,7 +190,7 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
 
   async function enviarFoto(produtoId: string): Promise<string | null> {
     if (!foto) return null;
-    const blob = await redimensionarImagem(foto);
+    const blob = foto;
     const ext = blob.type === "image/webp" ? "webp" : "jpg";
     const caminho = `${produtoId}/${Date.now()}.${ext}`;
     const sb = supabase();
@@ -207,6 +212,7 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
       const dados = {
         nome: nome.trim(),
         sku: sku.trim().toUpperCase(),
+        codigo: codigo.trim().toUpperCase() || null,
         cor: cor.trim(),
         preco: valor,
         estoque_minimo: Math.max(0, parseInt(minimo || "0", 10) || 0),
@@ -248,20 +254,31 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
   }
 
   return (
-    <form onSubmit={salvar} className="space-y-4">
+    <form onSubmit={salvar} className="space-y-4" autoComplete="off">
       <div className="flex items-center gap-3">
         <FotoProduto url={previa} nome={nome} className="size-24" />
         <label className="inline-flex min-h-12 cursor-pointer items-center gap-2 rounded-tema border-2 border-borda px-4 font-semibold hover:bg-superficie-2">
-          <Camera className="size-5" /> {previa ? "Trocar foto" : "Adicionar foto"}
+          <Camera className="size-5" /> {preparandoFoto ? "Preparando foto..." : previa ? "Trocar foto" : "Adicionar foto"}
           <input
             type="file"
             accept="image/*"
             className="sr-only"
-            onChange={(e) => {
+            disabled={preparandoFoto}
+            onChange={async (e) => {
               const f = e.target.files?.[0];
-              if (f) {
-                setFoto(f);
-                setPrevia(URL.createObjectURL(f));
+              if (!f) return;
+              setPreparandoFoto(true);
+              try {
+                const reduzida = await redimensionarImagem(f);
+                setFoto(reduzida);
+                setPrevia((antiga) => {
+                  if (antiga?.startsWith("blob:")) URL.revokeObjectURL(antiga);
+                  return URL.createObjectURL(reduzida);
+                });
+              } catch {
+                setErro("Não foi possível abrir esta foto. Tente outra (JPG ou PNG).");
+              } finally {
+                setPreparandoFoto(false);
               }
             }}
           />
@@ -273,7 +290,19 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Rotulo htmlFor="sku">SKU</Rotulo>
+          <Rotulo htmlFor="codigo">Código do produto</Rotulo>
+          <Campo
+            id="codigo"
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value)}
+            placeholder="ex.: 101"
+            autoCapitalize="characters"
+            className="uppercase"
+          />
+          <p className="mt-1 text-xs text-suave">Opcional. Curto, para o vendedor achar rápido.</p>
+        </div>
+        <div>
+          <Rotulo htmlFor="sku">SKU (referência)</Rotulo>
           <Campo id="sku" required value={sku} onChange={(e) => setSku(e.target.value)} placeholder="INS-RAIZ-VM" className="uppercase" />
         </div>
         <div>
@@ -325,7 +354,7 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
         Produto ativo (aparece para os vendedores)
       </label>
       {erro && <Aviso tom="perigo">{erro}</Aviso>}
-      <Botao type="submit" tamanho="lg" bloco carregando={salvando}>
+      <Botao type="submit" tamanho="lg" bloco carregando={salvando} disabled={preparandoFoto}>
         Salvar
       </Botao>
     </form>

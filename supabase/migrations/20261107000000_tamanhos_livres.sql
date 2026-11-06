@@ -358,3 +358,6 @@ revoke execute on function public.tg_produto_tamanhos() from public, anon, authe
 grant execute on function public.registrar_venda(uuid, uuid, text, integer, numeric, public.forma_pagamento, text, timestamptz) to authenticated;
 grant execute on function public.ajustar_estoque(uuid, text, integer, text) to authenticated;
 grant execute on function public._registrar_venda(uuid, uuid, uuid, text, integer, numeric, public.forma_pagamento, text, timestamptz) to service_role;
+
+-- Faz a API do Supabase enxergar as colunas novas na hora
+notify pgrst, 'reload schema';
