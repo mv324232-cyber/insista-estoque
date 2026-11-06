@@ -1,26 +1,72 @@
 @import "tailwindcss";
+@import "./tema.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-fundo: var(--cor-fundo);
+  --color-superficie: var(--cor-superficie);
+  --color-superficie-2: var(--cor-superficie-2);
+  --color-borda: var(--cor-borda);
+  --color-texto: var(--cor-texto);
+  --color-suave: var(--cor-texto-suave);
+  --color-primaria: var(--cor-primaria);
+  --color-primaria-hover: var(--cor-primaria-hover);
+  --color-primaria-texto: var(--cor-primaria-texto);
+  --color-destaque: var(--cor-destaque);
+  --color-destaque-texto: var(--cor-destaque-texto);
+  --color-sucesso: var(--cor-sucesso);
+  --color-sucesso-fundo: var(--cor-sucesso-fundo);
+  --color-alerta: var(--cor-alerta);
+  --color-alerta-fundo: var(--cor-alerta-fundo);
+  --color-perigo: var(--cor-perigo);
+  --color-perigo-fundo: var(--cor-perigo-fundo);
+  --radius-tema: var(--raio);
+  --radius-tema-g: var(--raio-grande);
+  --font-sans: var(--font-texto), ui-sans-serif, system-ui, sans-serif;
+  --font-marca: var(--font-titulo), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
+}
+html.dark {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+/* números alinhados em tabelas e valores */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-destaque);
+  outline-offset: 2px;
+}
+
+dialog::backdrop {
+  background: rgb(0 0 0 / 0.55);
+}
+
+/* espaço para a barra inferior + área segura do iPhone */
+.pb-seguro {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+.barra-inferior {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media print {
+  .nao-imprimir {
+    display: none !important;
+  }
 }

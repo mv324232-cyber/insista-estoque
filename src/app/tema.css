@@ -1,0 +1,59 @@
+/* ==================================================================
+   TEMA DA MARCA INSISTA
+   Troque as cores aqui — o sistema inteiro usa estas variáveis.
+   Formato: qualquer cor CSS (hex, rgb, oklch...).
+   ================================================================== */
+
+:root {
+  /* Fundo e superfícies */
+  --cor-fundo: #f5f2ea;          /* fundo geral (off-white quente) */
+  --cor-superficie: #ffffff;     /* cartões, campos */
+  --cor-superficie-2: #ebe6da;   /* áreas secundárias, chips */
+  --cor-borda: #d6cfbe;
+
+  /* Texto */
+  --cor-texto: #191c14;          /* texto principal (quase preto esverdeado) */
+  --cor-texto-suave: #545849;    /* textos de apoio */
+
+  /* Marca */
+  --cor-primaria: #2c4a26;       /* verde mata — botões principais */
+  --cor-primaria-hover: #21391d;
+  --cor-primaria-texto: #ffffff; /* texto sobre a cor primária */
+  --cor-destaque: #9a6b1f;       /* couro / safra — detalhes */
+  --cor-destaque-texto: #ffffff;
+
+  /* Estados */
+  --cor-sucesso: #1f6b2a;
+  --cor-sucesso-fundo: #dcefd9;
+  --cor-alerta: #8a4b00;
+  --cor-alerta-fundo: #fbe6c2;
+  --cor-perigo: #a3231a;
+  --cor-perigo-fundo: #f8dad6;
+
+  /* Formas */
+  --raio: 14px;
+  --raio-grande: 20px;
+}
+
+.dark {
+  --cor-fundo: #11130e;
+  --cor-superficie: #1a1d16;
+  --cor-superficie-2: #252920;
+  --cor-borda: #393e31;
+
+  --cor-texto: #f2efe6;
+  --cor-texto-suave: #b2b4a6;
+
+  --cor-primaria: #a6c97a;       /* verde claro para contraste no escuro */
+  --cor-primaria-hover: #bad98f;
+  --cor-primaria-texto: #11130e;
+  --cor-destaque: #e0ad55;
+  --cor-destaque-texto: #11130e;
+
+  --cor-sucesso: #8fd49a;
+  --cor-sucesso-fundo: #1d3320;
+  --cor-alerta: #f3bd62;
+  --cor-alerta-fundo: #3a2a10;
+  --cor-perigo: #ff9a8f;
+  --cor-perigo-fundo: #3d1714;
+}
