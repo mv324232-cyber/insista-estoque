@@ -3,7 +3,8 @@
 import { supabase } from "../supabase";
 import { atualizarNaFila, lerFila, removerDaFila } from "./fila";
 
-export type ResultadoSync = { enviadas: number; rejeitadas: number; semConexao: boolean };
+export type ResultadoSync = { enviadas: number; rejeitadas: number; semConexao: boolean; origem: Origem };
+export type Origem = "auto" | "manual";
 
 type Ouvinte = (r: ResultadoSync) => void;
 const ouvintes = new Set<Ouvinte>();
@@ -32,8 +33,8 @@ function erroDefinitivo(erro: { code?: string; message?: string; status?: number
   return false;
 }
 
-async function executar(usuarioId: string): Promise<ResultadoSync> {
-  const resultado: ResultadoSync = { enviadas: 0, rejeitadas: 0, semConexao: false };
+async function executar(usuarioId: string, origem: Origem): Promise<ResultadoSync> {
+  const resultado: ResultadoSync = { enviadas: 0, rejeitadas: 0, semConexao: false, origem };
   const pendentes = lerFila(usuarioId).filter((b) => b.estado === "pendente");
   if (pendentes.length === 0) {
     ultimaFalhaDeRede = false;
@@ -89,14 +90,14 @@ async function executar(usuarioId: string): Promise<ResultadoSync> {
 }
 
 /** Envia as baixas pendentes. Chamadas simultâneas reaproveitam a mesma execução. */
-export function sincronizar(usuarioId: string): Promise<ResultadoSync> {
+export function sincronizar(usuarioId: string, origem: Origem = "auto"): Promise<ResultadoSync> {
   if (!emAndamento) {
     const run = async () => {
       // evita duas abas enviando ao mesmo tempo
       if (typeof navigator !== "undefined" && "locks" in navigator) {
-        return navigator.locks.request(`insista-sync-${usuarioId}`, () => executar(usuarioId));
+        return navigator.locks.request(`insista-sync-${usuarioId}`, () => executar(usuarioId, origem));
       }
-      return executar(usuarioId);
+      return executar(usuarioId, origem);
     };
     emAndamento = run().finally(() => {
       emAndamento = null;
