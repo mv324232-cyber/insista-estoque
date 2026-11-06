@@ -1,5 +1,21 @@
-export const TAMANHOS = ["P", "M", "G", "GG", "XG"] as const;
-export type Tamanho = (typeof TAMANHOS)[number];
+/** Tamanho livre, digitado no cadastro do produto (ex.: "M", "XGG", "G2", "38"). */
+export type Tamanho = string;
+
+/** Atalhos de listas de tamanhos no cadastro (o dono pode digitar qualquer um). */
+export const GRADES_SUGERIDAS: { nome: string; tamanhos: string[] }[] = [
+  { nome: "PP ao XGG", tamanhos: ["PP", "P", "M", "G", "GG", "XG", "XGG"] },
+  { nome: "Plus (G1 a G5)", tamanhos: ["G1", "G2", "G3", "G4", "G5"] },
+  { nome: "Infantil (2 a 16)", tamanhos: ["2", "4", "6", "8", "10", "12", "14", "16"] },
+];
+
+/** Separa um texto digitado em tamanhos: "p, m g;GG" → ["P","M","G","GG"] */
+export function lerTamanhos(texto: string): string[] {
+  const vistos = new Set<string>();
+  return texto
+    .split(/[\s,;/|]+/)
+    .map((t) => t.trim().toUpperCase())
+    .filter((t) => t && t.length <= 12 && !vistos.has(t) && (vistos.add(t), true));
+}
 
 export const FORMAS_PAGAMENTO = ["dinheiro", "pix", "cartao", "fiado"] as const;
 export type FormaPagamento = (typeof FORMAS_PAGAMENTO)[number];
@@ -31,6 +47,7 @@ export interface Produto {
   cor: string;
   foto_url: string | null;
   preco: number;
+  tamanhos: string[];
   estoque_minimo: number;
   ativo: boolean;
   created_at: string;
@@ -94,20 +111,31 @@ export interface Resumo {
 export const SELECT_VENDA_DETALHADA =
   "*, produto:produtos(nome, sku, cor), vendedor:perfis!vendas_vendedor_id_fkey(nome, usuario)";
 
-export function estoqueVazio(): Record<Tamanho, number> {
-  return { P: 0, M: 0, G: 0, GG: 0, XG: 0 };
+export function estoqueVazio(tamanhos: string[] = []): Record<Tamanho, number> {
+  return Object.fromEntries(tamanhos.map((t) => [t, 0]));
 }
 
 export function montarCatalogo(produtos: Produto[], linhas: LinhaEstoque[]): ProdutoComEstoque[] {
   const mapa = new Map<string, Record<Tamanho, number>>();
   for (const l of linhas) {
-    const e = mapa.get(l.produto_id) ?? estoqueVazio();
+    const e = mapa.get(l.produto_id) ?? {};
     e[l.tamanho] = l.quantidade;
     mapa.set(l.produto_id, e);
   }
-  return produtos.map((p) => ({ ...p, preco: Number(p.preco), estoque: mapa.get(p.id) ?? estoqueVazio() }));
+  return produtos.map((p) => {
+    const tamanhos = p.tamanhos ?? [];
+    const doBanco = mapa.get(p.id) ?? {};
+    // só os tamanhos ativos do produto, na ordem cadastrada
+    const estoque = Object.fromEntries(tamanhos.map((t) => [t, doBanco[t] ?? 0]));
+    return { ...p, tamanhos, preco: Number(p.preco), estoque };
+  });
 }
 
 export function totalEstoque(e: Record<Tamanho, number>): number {
-  return TAMANHOS.reduce((s, t) => s + (e[t] ?? 0), 0);
+  return Object.values(e).reduce((s, q) => s + (q ?? 0), 0);
+}
+
+/** Tamanhos com estoque igual ou abaixo do alerta do produto. */
+export function tamanhosBaixos(p: ProdutoComEstoque): Tamanho[] {
+  return p.tamanhos.filter((t) => (p.estoque[t] ?? 0) <= p.estoque_minimo);
 }

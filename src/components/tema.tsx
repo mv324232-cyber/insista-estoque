@@ -20,7 +20,7 @@ export function BotaoTema({ className = "" }: { className?: string }) {
       localStorage.setItem("insista:tema", novo ? "escuro" : "claro");
     } catch {}
     const meta = document.querySelector('meta[name="theme-color"]');
-    meta?.setAttribute("content", novo ? "#11130e" : "#2c4a26");
+    meta?.setAttribute("content", novo ? "#0b0b0b" : "#111111");
   }
 
   return (

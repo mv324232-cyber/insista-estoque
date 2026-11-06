@@ -6,7 +6,7 @@ Cada vendedor dá baixa pelo celular — **mesmo sem internet** — e o dono aco
 - **Next.js 16** (App Router) + **TypeScript** + **Tailwind CSS 4**
 - **Supabase**: Postgres + Auth + Realtime + Storage (fotos)
 - **PWA instalável**, mobile-first, com fila offline e sincronização automática
-- Modo claro/escuro; cores da marca num único arquivo (`src/app/tema.css`)
+- Modo claro/escuro; cores da marca (preto, vermelho e branco) num único arquivo (`src/app/tema.css`)
 
 ---
 
@@ -40,7 +40,8 @@ Cada vendedor dá baixa pelo celular — **mesmo sem internet** — e o dono aco
 ### Dono (admin)
 - **Painel ao vivo:** vendas de hoje, da semana e do mês (quantidade e valor), ranking de vendedores, designs mais vendidos, totais por forma de pagamento com **destaque para o fiado**, alerta de estoque baixo e **feed em tempo real** das últimas baixas.
 - **Produtos:** nome do design, SKU, foto, cor, preço, alerta de estoque baixo por produto, ativar/desativar.
-- **Estoque** único por produto e tamanho (P, M, G, GG, XG): **entrada/reposição** com data e quantidade, **ajuste de inventário** com motivo, histórico de movimentações.
+- **Tamanhos digitados livremente** por produto (PP, P, M, G, GG, XG, XGG, G1…G5, 2…16, 36…46 ou qualquer outro), com atalhos para grades comuns.
+- **Estoque** único por produto e tamanho: **entrada/reposição** com data e quantidade, **ajuste de inventário** com motivo, histórico de movimentações.
 - **Vendedores:** cadastrar, editar, trocar senha, definir % de comissão, **desativar** (bloqueia o login na hora).
 - **Vendas:** histórico completo com filtros (período, vendedor, produto, pagamento, situação), **cancelar** ou **alterar valor** (motivo obrigatório), exportar **CSV** e **PDF**.
 - **Relatórios:** faturamento por período e por vendedor, **cálculo de comissão**, faturamento por dia, por design e por pagamento — com exportação **CSV/PDF**.
@@ -63,9 +64,11 @@ npm install
 
 ### 2. Criar o banco no Supabase
 1. Em [supabase.com/dashboard](https://supabase.com/dashboard), clique em **New project** (região sugerida: *South America (São Paulo)*).
-2. Abra **SQL Editor → New query**, cole **todo** o conteúdo de
-   `supabase/migrations/20261106000000_schema_inicial.sql` e clique em **Run**.
-   Isso cria tabelas, regras, políticas de segurança (RLS), Realtime e o bucket de fotos.
+2. Abra **SQL Editor → New query** e rode, **em ordem e uma vez cada**, os arquivos da pasta `supabase/migrations/`:
+   1. `20261106000000_schema_inicial.sql` — tabelas, regras, políticas de segurança (RLS), Realtime e bucket de fotos;
+   2. `20261107000000_tamanhos_livres.sql` — tamanhos digitados por produto.
+
+   Cole **todo** o conteúdo de cada arquivo e clique em **Run**.
 
    > Alternativa pela linha de comando:
    > ```bash
@@ -186,7 +189,7 @@ O ícone da Insista aparece na tela inicial e o app abre em tela cheia, como um 
 
 ## Personalizar cores e logo
 
-- **Cores:** edite **`src/app/tema.css`** — há um bloco para o modo claro (`:root`) e outro para o escuro (`.dark`). Todo o sistema usa essas variáveis.
+- **Cores** (hoje: preto, vermelho e branco): edite **`src/app/tema.css`** — há um bloco para o modo claro (`:root`) e outro para o escuro (`.dark`). Todo o sistema usa essas variáveis.
 - **Logo:** o emblema está em `src/components/logo.tsx`; os ícones do app em `public/icons/` (192, 512, maskable e apple-touch).
 - **Nome/cor do app instalado:** `src/app/manifest.ts`.
 
@@ -197,6 +200,7 @@ O ícone da Insista aparece na tela inicial e o app abre em tela cheia, como um 
 ```
 supabase/
   migrations/…_schema_inicial.sql   # tabelas, funções, RLS, auditoria, realtime, storage
+  migrations/…_tamanhos_livres.sql  # tamanhos digitados por produto
 scripts/
   seed.mjs                          # dados de exemplo
   criar-admin.mjs                   # cria o dono em produção

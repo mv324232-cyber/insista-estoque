@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { baixarCatalogo, catalogoSalvo, type CatalogoSalvo } from "@/lib/offline/catalogo";
 import { aoSincronizar } from "@/lib/offline/sincronizar";
 import { supabase } from "@/lib/supabase";
-import { TAMANHOS, type ProdutoComEstoque, type Tamanho } from "@/lib/tipos";
+import type { ProdutoComEstoque } from "@/lib/tipos";
 import { useFila } from "../conexao";
 
 /**
@@ -66,7 +66,7 @@ export function useCatalogo(usuarioId: string | undefined) {
     }
     return catalogo.produtos.map((p) => {
       const estoque = { ...p.estoque };
-      for (const t of TAMANHOS) estoque[t as Tamanho] = Math.max(0, estoque[t] - (reservado.get(`${p.id}:${t}`) ?? 0));
+      for (const t of p.tamanhos) estoque[t] = Math.max(0, estoque[t] - (reservado.get(`${p.id}:${t}`) ?? 0));
       return { ...p, estoque };
     });
   }, [catalogo, fila]);

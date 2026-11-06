@@ -14,7 +14,7 @@ import {
   montarCatalogo,
   ROTULO_FORMA,
   SELECT_VENDA_DETALHADA,
-  TAMANHOS,
+  tamanhosBaixos,
   type LinhaEstoque,
   type Produto,
   type ProdutoComEstoque,
@@ -64,7 +64,7 @@ export default function Painel() {
       if (f.data) setFeed(f.data as VendaDetalhada[]);
       if (p.data && e.data) {
         const cat = montarCatalogo(p.data as Produto[], e.data as LinhaEstoque[]);
-        setEstoqueBaixo(cat.filter((x) => TAMANHOS.some((t) => x.estoque[t] <= x.estoque_minimo)));
+        setEstoqueBaixo(cat.filter((x) => tamanhosBaixos(x).length > 0));
       }
     } catch (err) {
       avisar(mensagemErro(err), "erro");
@@ -150,7 +150,7 @@ export default function Painel() {
                 .slice(0, 6)
                 .map(
                   (p) =>
-                    `${p.nome} (${TAMANHOS.filter((t) => p.estoque[t] <= p.estoque_minimo)
+                    `${p.nome} (${tamanhosBaixos(p)
                       .map((t) => `${t}: ${p.estoque[t]}`)
                       .join(", ")})`,
                 )

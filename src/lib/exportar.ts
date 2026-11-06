@@ -41,10 +41,13 @@ export async function exportarPDF(o: OpcoesPDF) {
   const [{ jsPDF }, { autoTable }] = await Promise.all([import("jspdf"), import("jspdf-autotable")]);
   const doc = new jsPDF({ orientation: o.paisagem ? "landscape" : "portrait", unit: "pt", format: "a4" });
   const largura = doc.internal.pageSize.getWidth();
-  const verde: [number, number, number] = [44, 74, 38];
+  const preto: [number, number, number] = [17, 17, 17];
+  const vermelho: [number, number, number] = [200, 16, 46];
 
-  doc.setFillColor(...verde);
+  doc.setFillColor(...preto);
   doc.rect(0, 0, largura, 56, "F");
+  doc.setFillColor(...vermelho);
+  doc.rect(0, 56, largura, 4, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
@@ -55,7 +58,7 @@ export async function exportarPDF(o: OpcoesPDF) {
   if (o.subtitulo) doc.text(o.subtitulo, largura - 32, 44, { align: "right" });
 
   let y = 80;
-  doc.setTextColor(25, 28, 20);
+  doc.setTextColor(17, 17, 17);
   if (o.resumo?.length) {
     doc.setFontSize(10);
     const col = (largura - 64) / Math.min(o.resumo.length, 4);
@@ -63,10 +66,10 @@ export async function exportarPDF(o: OpcoesPDF) {
       const x = 32 + (i % 4) * col;
       const yy = y + Math.floor(i / 4) * 38;
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(84, 88, 73);
+      doc.setTextColor(85, 85, 85);
       doc.text(rotulo, x, yy);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(25, 28, 20);
+      doc.setTextColor(17, 17, 17);
       doc.setFontSize(13);
       doc.text(valor, x, yy + 16);
       doc.setFontSize(10);
@@ -81,8 +84,8 @@ export async function exportarPDF(o: OpcoesPDF) {
     head: [o.colunas],
     body: o.linhas.map((l) => l.map((c) => (c === null || c === undefined ? "" : String(c)))),
     styles: { fontSize: 8.5, cellPadding: 4 },
-    headStyles: { fillColor: verde, textColor: 255 },
-    alternateRowStyles: { fillColor: [245, 242, 234] },
+    headStyles: { fillColor: preto, textColor: 255 },
+    alternateRowStyles: { fillColor: [244, 244, 244] },
     columnStyles: estilos,
     margin: { left: 32, right: 32 },
     didDrawPage: () => {

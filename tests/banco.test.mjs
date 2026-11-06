@@ -33,7 +33,7 @@ const maria = await login("maria", "maria1234");
 const SKU = `TESTE-${Date.now()}`;
 const { data: produto, error: eProd } = await dono
   .from("produtos")
-  .insert({ nome: "Produto Teste", sku: SKU, cor: "Teste", preco: 100, estoque_minimo: 1 })
+  .insert({ nome: "Produto Teste", sku: SKU, cor: "Teste", preco: 100, estoque_minimo: 1, tamanhos: ["P", " m ", "G2", "38"] })
   .select()
   .single();
 if (eProd) throw eProd;
@@ -75,6 +75,30 @@ test("anônimo não lê nada", async () => {
 
 test("estoque começa com a entrada registrada", async () => {
   assert.equal(await estoqueM(), 5);
+});
+
+test("tamanhos livres: normaliza, cria estoque e recusa tamanho inexistente", async () => {
+  const { data: p } = await service.from("produtos").select("tamanhos").eq("id", produto.id).single();
+  assert.deepEqual(p.tamanhos, ["P", "M", "G2", "38"]);
+  const linhas = sql(`select string_agg(tamanho, ',' order by tamanho) from public.estoque where produto_id='${produto.id}'`);
+  assert.equal(linhas, "38,G2,M,P");
+  const r1 = await venda(joao, { p_tamanho: "XGG" });
+  assert.ok(r1.error);
+  assert.match(r1.error.message, /não existe/);
+  const r2 = await dono.rpc("registrar_entrada", { p_produto_id: produto.id, p_itens: [{ tamanho: "g2", quantidade: 2 }] });
+  assert.ifError(r2.error);
+  const g2 = sql(`select quantidade from public.estoque where produto_id='${produto.id}' and tamanho='G2'`);
+  assert.equal(g2, "2");
+  // não deixa remover tamanho com estoque
+  const r3 = await dono.from("produtos").update({ tamanhos: ["P", "M", "38"] }).eq("id", produto.id);
+  assert.ok(r3.error);
+  assert.match(r3.error.message, /G2 ainda tem 2/);
+  // sem estoque pode remover e adicionar outro
+  const r4 = await dono.from("produtos").update({ tamanhos: ["P", "M", "G2", "XGG"] }).eq("id", produto.id);
+  assert.ifError(r4.error);
+  assert.equal(sql(`select count(*) from public.estoque where produto_id='${produto.id}' and tamanho='XGG'`), "1");
+  const r5 = await dono.from("produtos").update({ tamanhos: [] }).eq("id", produto.id);
+  assert.ok(r5.error, "aceitou produto sem tamanhos");
 });
 
 test("vendedor registra baixa com valor alterado e o valor cobrado fica gravado", async () => {

@@ -6,7 +6,7 @@
  *  - Fotos dos produtos (Supabase Storage): cache primeiro.
  *  - Chamadas à API do Supabase: nunca passam pelo cache (a fila offline cuida disso).
  */
-const VERSAO = "insista-v1";
+const VERSAO = "insista-v2";
 const CACHE_PAGINAS = `${VERSAO}-paginas`;
 const CACHE_ESTATICOS = `${VERSAO}-estaticos`;
 const CACHE_FOTOS = `${VERSAO}-fotos`;

@@ -10,7 +10,7 @@ import { dataCurta, dataHora, dataISO, numero } from "@/lib/formato";
 import { supabase } from "@/lib/supabase";
 import {
   montarCatalogo,
-  TAMANHOS,
+  tamanhosBaixos,
   totalEstoque,
   type LinhaEstoque,
   type Produto,
@@ -95,13 +95,13 @@ export default function PaginaEstoque() {
     const termo = busca.trim().toLowerCase();
     return (produtos ?? []).filter((p) => {
       if (termo && !p.nome.toLowerCase().includes(termo) && !p.sku.toLowerCase().includes(termo)) return false;
-      if (soBaixo && !TAMANHOS.some((t) => p.estoque[t] <= p.estoque_minimo)) return false;
+      if (soBaixo && tamanhosBaixos(p).length === 0) return false;
       return true;
     });
   }, [produtos, busca, soBaixo]);
 
   const totalGeral = (produtos ?? []).reduce((s, p) => s + totalEstoque(p.estoque), 0);
-  const qtdBaixo = (produtos ?? []).filter((p) => TAMANHOS.some((t) => p.estoque[t] <= p.estoque_minimo)).length;
+  const qtdBaixo = (produtos ?? []).filter((p) => tamanhosBaixos(p).length > 0).length;
 
   return (
     <>
@@ -137,67 +137,52 @@ export default function PaginaEstoque() {
       ) : lista.length === 0 ? (
         <Vazio titulo="Nenhum produto" />
       ) : (
-        <div className="overflow-x-auto rounded-tema-g border border-borda bg-superficie">
-          <table className="num w-full min-w-[640px] text-left">
-            <thead className="bg-superficie-2 text-sm">
-              <tr>
-                <th className="px-3 py-2.5">Produto</th>
-                {TAMANHOS.map((t) => (
-                  <th key={t} className="w-14 px-1 py-2.5 text-center">
-                    {t}
-                  </th>
-                ))}
-                <th className="w-16 px-2 py-2.5 text-center">Total</th>
-                <th className="px-3 py-2.5 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lista.map((p) => (
-                <tr key={p.id} className="border-t border-borda">
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2.5">
-                      <FotoProduto url={p.foto_url} nome={p.nome} className="size-11" />
-                      <div className="min-w-0">
-                        <p className="truncate font-bold leading-tight">{p.nome}</p>
-                        <p className="text-xs text-suave">
-                          {p.sku} · mín. {p.estoque_minimo}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  {TAMANHOS.map((t) => {
-                    const q = p.estoque[t];
-                    const baixo = q <= p.estoque_minimo;
-                    return (
-                      <td key={t} className="px-1 py-2 text-center">
-                        <span
-                          className={cx(
-                            "inline-block min-w-10 rounded-lg px-1.5 py-1 text-lg font-bold",
-                            q === 0 ? "bg-perigo-fundo text-perigo" : baixo ? "bg-alerta-fundo text-alerta" : "",
-                          )}
-                          title={baixo ? "Estoque baixo" : undefined}
-                        >
-                          {q}
-                        </span>
-                      </td>
-                    );
-                  })}
-                  <td className="px-2 py-2 text-center text-lg font-bold">{totalEstoque(p.estoque)}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex justify-end gap-1.5">
-                      <Botao tamanho="sm" onClick={() => setAcao({ tipo: "entrada", produto: p })}>
-                        <PackagePlus className="size-4" /> Entrada
-                      </Botao>
-                      <Botao tamanho="sm" variante="secundario" onClick={() => setAcao({ tipo: "ajuste", produto: p })}>
-                        <SlidersHorizontal className="size-4" /> Ajustar
-                      </Botao>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className="space-y-2">
+          {lista.map((p) => (
+            <li key={p.id} className="rounded-tema-g border border-borda bg-superficie p-3" data-sku={p.sku}>
+              <div className="flex flex-wrap items-center gap-3">
+                <FotoProduto url={p.foto_url} nome={p.nome} className="size-12" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-bold leading-tight">{p.nome}</p>
+                  <p className="text-xs text-suave">
+                    {p.sku} · {p.cor || "—"} · alerta ≤ {p.estoque_minimo}
+                  </p>
+                </div>
+                <div className="num text-right">
+                  <p className="text-xs font-semibold text-suave">Total</p>
+                  <p className="text-xl font-bold leading-none">{totalEstoque(p.estoque)}</p>
+                </div>
+                <div className="flex gap-1.5">
+                  <Botao tamanho="sm" onClick={() => setAcao({ tipo: "entrada", produto: p })}>
+                    <PackagePlus className="size-4" /> Entrada
+                  </Botao>
+                  <Botao tamanho="sm" variante="secundario" onClick={() => setAcao({ tipo: "ajuste", produto: p })}>
+                    <SlidersHorizontal className="size-4" /> Ajustar
+                  </Botao>
+                </div>
+              </div>
+              <div className="num mt-2.5 flex flex-wrap gap-1.5" aria-label="Estoque por tamanho">
+                {p.tamanhos.map((t) => {
+                  const q = p.estoque[t] ?? 0;
+                  const baixo = q <= p.estoque_minimo;
+                  return (
+                    <span
+                      key={t}
+                      title={baixo ? "Estoque baixo" : undefined}
+                      className={cx(
+                        "inline-flex min-w-14 flex-col items-center rounded-lg px-2 py-1",
+                        q === 0 ? "bg-perigo-fundo text-perigo" : baixo ? "bg-alerta-fundo text-alerta" : "bg-superficie-2",
+                      )}
+                    >
+                      <span className="text-[11px] font-semibold opacity-80">{t}</span>
+                      <span className="text-lg font-bold leading-tight">{q}</span>
+                    </span>
+                  );
+                })}
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
 
       <section className="mt-8">
@@ -276,12 +261,12 @@ function CabecalhoProduto({ produto }: { produto: ProdutoComEstoque }) {
 
 function FormEntrada({ produto, aoSalvar }: { produto: ProdutoComEstoque; aoSalvar: () => void }) {
   const avisar = useAviso();
-  const [qtd, setQtd] = useState<Record<Tamanho, string>>({ P: "", M: "", G: "", GG: "", XG: "" });
+  const [qtd, setQtd] = useState<Record<Tamanho, string>>({});
   const [data, setData] = useState(dataISO(new Date()));
   const [obs, setObs] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const total = TAMANHOS.reduce((s, t) => s + (parseInt(qtd[t] || "0", 10) || 0), 0);
+  const total = produto.tamanhos.reduce((s, t) => s + (parseInt(qtd[t] || "0", 10) || 0), 0);
 
   async function salvar(e: FormEvent) {
     e.preventDefault();
@@ -290,7 +275,7 @@ function FormEntrada({ produto, aoSalvar }: { produto: ProdutoComEstoque; aoSalv
     setSalvando(true);
     const { error } = await supabase().rpc("registrar_entrada", {
       p_produto_id: produto.id,
-      p_itens: TAMANHOS.map((t) => ({ tamanho: t, quantidade: parseInt(qtd[t] || "0", 10) || 0 })),
+      p_itens: produto.tamanhos.map((t) => ({ tamanho: t, quantidade: parseInt(qtd[t] || "0", 10) || 0 })),
       p_data: data,
       p_observacao: obs || null,
     });
@@ -303,8 +288,8 @@ function FormEntrada({ produto, aoSalvar }: { produto: ProdutoComEstoque; aoSalv
   return (
     <form onSubmit={salvar} className="space-y-4">
       <CabecalhoProduto produto={produto} />
-      <div className="grid grid-cols-5 gap-2">
-        {TAMANHOS.map((t) => (
+      <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+        {produto.tamanhos.map((t) => (
           <div key={t}>
             <span className="mb-1 block text-center font-bold">{t}</span>
             <Campo
@@ -312,7 +297,7 @@ function FormEntrada({ produto, aoSalvar }: { produto: ProdutoComEstoque; aoSalv
               min={0}
               inputMode="numeric"
               aria-label={`Quantidade ${t}`}
-              value={qtd[t]}
+              value={qtd[t] ?? ""}
               onChange={(e) => setQtd((s) => ({ ...s, [t]: e.target.value }))}
               className="px-1 text-center text-lg"
             />
@@ -345,8 +330,8 @@ function FormEntrada({ produto, aoSalvar }: { produto: ProdutoComEstoque; aoSalv
 
 function FormAjuste({ produto, aoSalvar }: { produto: ProdutoComEstoque; aoSalvar: () => void }) {
   const avisar = useAviso();
-  const [tamanho, setTamanho] = useState<Tamanho>("M");
-  const [nova, setNova] = useState(String(produto.estoque.M));
+  const [tamanho, setTamanho] = useState<Tamanho>(produto.tamanhos[0] ?? "");
+  const [nova, setNova] = useState(String(produto.estoque[produto.tamanhos[0]] ?? 0));
   const [motivo, setMotivo] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -378,7 +363,8 @@ function FormAjuste({ produto, aoSalvar }: { produto: ProdutoComEstoque; aoSalva
         <Rotulo>Tamanho</Rotulo>
         <Escolha
           nome="Tamanho"
-          opcoes={TAMANHOS}
+          opcoes={produto.tamanhos}
+          colunas={Math.min(5, Math.max(1, produto.tamanhos.length))}
           valor={tamanho}
           aoMudar={(t) => {
             setTamanho(t);

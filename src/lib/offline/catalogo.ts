@@ -12,7 +12,16 @@ export interface CatalogoSalvo {
 }
 
 export function catalogoSalvo(): CatalogoSalvo {
-  return ler<CatalogoSalvo>(CHAVE, { atualizadoEm: null, produtos: [] });
+  const salvo = ler<CatalogoSalvo>(CHAVE, { atualizadoEm: null, produtos: [] });
+  // catálogos guardados por versões antigas não tinham a lista de tamanhos
+  return {
+    ...salvo,
+    produtos: (salvo.produtos ?? []).map((p) => ({
+      ...p,
+      tamanhos: Array.isArray(p.tamanhos) ? p.tamanhos : Object.keys(p.estoque ?? {}),
+      estoque: p.estoque ?? {},
+    })),
+  };
 }
 
 /** Busca produtos ativos + estoque no servidor e guarda no aparelho. */

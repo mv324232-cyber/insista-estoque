@@ -1,34 +1,34 @@
 /* ==================================================================
-   TEMA DA MARCA INSISTA
+   TEMA DA MARCA INSISTA — preto, vermelho e branco
    Troque as cores aqui — o sistema inteiro usa estas variáveis.
    Formato: qualquer cor CSS (hex, rgb, oklch...).
    ================================================================== */
 
 :root {
   /* Fundo e superfícies */
-  --cor-fundo: #f5f2ea;          /* fundo geral (off-white quente) */
+  --cor-fundo: #f4f4f4;          /* fundo geral (cinza bem claro) */
   --cor-superficie: #ffffff;     /* cartões, campos */
-  --cor-superficie-2: #ebe6da;   /* áreas secundárias, chips */
-  --cor-borda: #d6cfbe;
+  --cor-superficie-2: #ececec;   /* áreas secundárias, chips */
+  --cor-borda: #d9d9d9;
 
   /* Texto */
-  --cor-texto: #191c14;          /* texto principal (quase preto esverdeado) */
-  --cor-texto-suave: #545849;    /* textos de apoio */
+  --cor-texto: #111111;          /* preto */
+  --cor-texto-suave: #555555;    /* textos de apoio */
 
   /* Marca */
-  --cor-primaria: #2c4a26;       /* verde mata — botões principais */
-  --cor-primaria-hover: #21391d;
-  --cor-primaria-texto: #ffffff; /* texto sobre a cor primária */
-  --cor-destaque: #9a6b1f;       /* couro / safra — detalhes */
+  --cor-primaria: #c8102e;       /* vermelho — botões principais e seleção */
+  --cor-primaria-hover: #a30d25;
+  --cor-primaria-texto: #ffffff; /* texto sobre o vermelho */
+  --cor-destaque: #111111;       /* preto — detalhes e destaque do fiado */
   --cor-destaque-texto: #ffffff;
 
-  /* Estados */
-  --cor-sucesso: #1f6b2a;
-  --cor-sucesso-fundo: #dcefd9;
+  /* Estados (alertas) */
+  --cor-sucesso: #1d6b2a;
+  --cor-sucesso-fundo: #dcf0dc;
   --cor-alerta: #8a4b00;
-  --cor-alerta-fundo: #fbe6c2;
-  --cor-perigo: #a3231a;
-  --cor-perigo-fundo: #f8dad6;
+  --cor-alerta-fundo: #fbe7c4;
+  --cor-perigo: #8f1111;
+  --cor-perigo-fundo: #fbe0e0;
 
   /* Formas */
   --raio: 14px;
@@ -36,24 +36,24 @@
 }
 
 .dark {
-  --cor-fundo: #11130e;
-  --cor-superficie: #1a1d16;
-  --cor-superficie-2: #252920;
-  --cor-borda: #393e31;
+  --cor-fundo: #0b0b0b;
+  --cor-superficie: #161616;
+  --cor-superficie-2: #232323;
+  --cor-borda: #363636;
 
-  --cor-texto: #f2efe6;
-  --cor-texto-suave: #b2b4a6;
+  --cor-texto: #f5f5f5;
+  --cor-texto-suave: #a8a8a8;
 
-  --cor-primaria: #a6c97a;       /* verde claro para contraste no escuro */
-  --cor-primaria-hover: #bad98f;
-  --cor-primaria-texto: #11130e;
-  --cor-destaque: #e0ad55;
-  --cor-destaque-texto: #11130e;
+  --cor-primaria: #e3263c;       /* vermelho um pouco mais claro no escuro */
+  --cor-primaria-hover: #f03a50;
+  --cor-primaria-texto: #ffffff;
+  --cor-destaque: #ffffff;       /* branco */
+  --cor-destaque-texto: #0b0b0b;
 
   --cor-sucesso: #8fd49a;
-  --cor-sucesso-fundo: #1d3320;
+  --cor-sucesso-fundo: #163019;
   --cor-alerta: #f3bd62;
-  --cor-alerta-fundo: #3a2a10;
-  --cor-perigo: #ff9a8f;
-  --cor-perigo-fundo: #3d1714;
+  --cor-alerta-fundo: #352710;
+  --cor-perigo: #ff8a8a;
+  --cor-perigo-fundo: #3a1414;
 }

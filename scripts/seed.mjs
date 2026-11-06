@@ -47,11 +47,12 @@ const PRODUTOS = [
     estoque: { P: 3, M: 8, G: 9, GG: 5, XG: 1 } },
   { sku: "INS-TRAT-CC", nome: "Trator Velho", cor: "Cinza Chumbo", preco: 129.9, minimo: 5, foto: "trator-velho.png",
     estoque: { P: 2, M: 6, G: 4, GG: 3, XG: 0 } },
+  { sku: "INS-RAIZ-PLUS", nome: "Raiz Forte Plus", cor: "Preto", preco: 149.9, minimo: 2, foto: null,
+    estoque: { G1: 4, G2: 5, G3: 3, G4: 2, G5: 1 } },
   { sku: "INS-ROD25-VN", nome: "Rodeio 2025 (edição antiga)", cor: "Vinho", preco: 99.9, minimo: 0, foto: null,
     estoque: { P: 0, M: 2, G: 1, GG: 0, XG: 0 }, inativo: true },
 ];
 
-const TAMANHOS = ["P", "M", "G", "GG", "XG"];
 const FORMAS = ["pix", "pix", "pix", "dinheiro", "dinheiro", "cartao", "cartao", "fiado"];
 const CLIENTES = ["Seu Zé da Fazenda Boa Vista", "Dona Cida", "Tonho do Leilão", "Carlos (peão)", "Lu do Haras", null, null, null];
 
@@ -121,12 +122,12 @@ async function garantirProdutos(dono) {
     const foto_url = await enviarFoto(p.foto);
     const { data, error } = await dono
       .from("produtos")
-      .insert({ sku: p.sku, nome: p.nome, cor: p.cor, preco: p.preco, estoque_minimo: p.minimo, foto_url })
+      .insert({ sku: p.sku, nome: p.nome, cor: p.cor, preco: p.preco, estoque_minimo: p.minimo, foto_url, tamanhos: Object.keys(p.estoque) })
       .select("id")
       .single();
     if (error) throw new Error(`Produto ${p.sku}: ${error.message}`);
 
-    const itens = TAMANHOS.map((t) => ({ tamanho: t, quantidade: p.estoque[t] + 6 })).filter((i) => i.quantidade > 0);
+    const itens = Object.keys(p.estoque).map((t) => ({ tamanho: t, quantidade: p.estoque[t] + 6 })).filter((i) => i.quantidade > 0);
     const dataEntrada = new Date(Date.now() - 32 * 864e5).toISOString().slice(0, 10);
     const { error: e2 } = await dono.rpc("registrar_entrada", {
       p_produto_id: data.id,
@@ -159,7 +160,7 @@ async function criarVendas(ids, produtos) {
     for (let i = 0; i < vendasNoDia; i++) {
       const vendedor = aleatorio(vendedores);
       const produto = aleatorio(ativos);
-      const tamanho = aleatorio(["M", "M", "G", "G", "GG", "P", "XG"]);
+      const tamanho = aleatorio(Object.keys(produto.estoque));
       const quantidade = Math.random() < 0.85 ? 1 : 2;
       const desconto = Math.random() < 0.2 ? 10 : 0;
       const quando = new Date(Date.now() - dia * 864e5);

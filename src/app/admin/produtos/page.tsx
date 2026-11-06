@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import { Camera, Pencil, Plus, Search } from "lucide-react";
 import { useAviso } from "@/components/avisos";
+import { CampoTamanhos } from "@/components/campo-tamanhos";
 import { FotoProduto } from "@/components/foto-produto";
 import { Aviso, Botao, Campo, Carregando, Dialogo, Rotulo, Selecao, Selo, Titulo, Vazio, cx } from "@/components/ui";
 import { mensagemErro } from "@/lib/erros";
@@ -11,7 +12,7 @@ import { redimensionarImagem } from "@/lib/imagem";
 import { supabase } from "@/lib/supabase";
 import {
   montarCatalogo,
-  TAMANHOS,
+  tamanhosBaixos,
   totalEstoque,
   type LinhaEstoque,
   type Produto,
@@ -98,7 +99,7 @@ export default function PaginaProdutos() {
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {lista.map((p) => {
             const total = totalEstoque(p.estoque);
-            const baixo = TAMANHOS.filter((t) => p.estoque[t] <= p.estoque_minimo);
+            const baixo = tamanhosBaixos(p);
             return (
               <div key={p.id} className={cx("rounded-tema-g border border-borda bg-superficie p-3", !p.ativo && "opacity-60")}>
                 <div className="flex gap-3">
@@ -115,12 +116,12 @@ export default function PaginaProdutos() {
                     {p.ativo && baixo.length > 0 && <Selo tom="alerta">Estoque baixo</Selo>}
                   </div>
                 </div>
-                <div className="num mt-3 grid grid-cols-6 gap-1 text-center text-sm">
-                  {TAMANHOS.map((t) => (
+                <div className="num mt-3 flex flex-wrap gap-1 text-center text-sm">
+                  {p.tamanhos.map((t) => (
                     <div
                       key={t}
                       className={cx(
-                        "rounded-lg py-1",
+                        "min-w-11 rounded-lg px-1.5 py-1",
                         p.estoque[t] <= p.estoque_minimo ? "bg-alerta-fundo text-alerta" : "bg-superficie-2",
                       )}
                     >
@@ -128,7 +129,7 @@ export default function PaginaProdutos() {
                       <div className="font-bold">{p.estoque[t]}</div>
                     </div>
                   ))}
-                  <div className="rounded-lg bg-primaria py-1 text-primaria-texto">
+                  <div className="min-w-11 rounded-lg bg-primaria px-1.5 py-1 text-primaria-texto">
                     <div className="text-[11px] font-semibold opacity-80">Total</div>
                     <div className="font-bold">{total}</div>
                   </div>
@@ -176,7 +177,9 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
   const [ativo, setAtivo] = useState(produto?.ativo ?? true);
   const [foto, setFoto] = useState<File | null>(null);
   const [previa, setPrevia] = useState<string | null>(produto?.foto_url ?? null);
-  const [inicial, setInicial] = useState<Record<Tamanho, string>>({ P: "", M: "", G: "", GG: "", XG: "" });
+  const [tamanhos, setTamanhos] = useState<Tamanho[]>(produto?.tamanhos ?? []);
+  const [inicial, setInicial] = useState<Record<Tamanho, string>>({});
+  const comEstoque = produto ? produto.tamanhos.filter((t) => (produto.estoque[t] ?? 0) > 0) : [];
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -197,6 +200,7 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
     const valor = lerValor(preco);
     if (!nome.trim() || !sku.trim()) return setErro("Preencha nome e SKU.");
     if (!(valor >= 0) || preco.trim() === "") return setErro("Preço inválido.");
+    if (tamanhos.length === 0) return setErro("Digite ao menos um tamanho.");
     setSalvando(true);
     try {
       const sb = supabase();
@@ -206,6 +210,7 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
         cor: cor.trim(),
         preco: valor,
         estoque_minimo: Math.max(0, parseInt(minimo || "0", 10) || 0),
+        tamanhos,
         ativo,
       };
       let id = produto?.id;
@@ -216,7 +221,7 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
         const { data, error } = await sb.from("produtos").insert(dados).select("id").single();
         if (error) throw error;
         id = data.id as string;
-        const itens = TAMANHOS.map((t) => ({ tamanho: t, quantidade: parseInt(inicial[t] || "0", 10) || 0 })).filter(
+        const itens = tamanhos.map((t) => ({ tamanho: t, quantidade: parseInt(inicial[t] || "0", 10) || 0 })).filter(
           (i) => i.quantidade > 0,
         );
         if (itens.length) {
@@ -285,11 +290,20 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
           <p className="mt-1 text-xs text-suave">Avisa quando um tamanho tiver esta quantidade ou menos.</p>
         </div>
       </div>
-      {!produto && (
+      <div>
+        <Rotulo>Tamanhos</Rotulo>
+        <CampoTamanhos valor={tamanhos} aoMudar={setTamanhos} bloqueados={comEstoque} />
+        {comEstoque.length > 0 && (
+          <p className="mt-1 text-xs text-suave">
+            Tamanhos com peças em estoque não podem ser removidos ({comEstoque.join(", ")}). Zere-os em Estoque → Ajustar.
+          </p>
+        )}
+      </div>
+      {!produto && tamanhos.length > 0 && (
         <div>
           <Rotulo>Estoque inicial por tamanho (opcional)</Rotulo>
-          <div className="grid grid-cols-5 gap-2">
-            {TAMANHOS.map((t) => (
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+            {tamanhos.map((t) => (
               <div key={t}>
                 <span className="mb-1 block text-center text-sm font-bold">{t}</span>
                 <Campo
@@ -297,7 +311,7 @@ function FormProduto({ produto, aoSalvar }: { produto: ProdutoComEstoque | null;
                   min={0}
                   inputMode="numeric"
                   aria-label={`Estoque inicial ${t}`}
-                  value={inicial[t]}
+                  value={inicial[t] ?? ""}
                   onChange={(e) => setInicial((s) => ({ ...s, [t]: e.target.value }))}
                   className="px-2 text-center"
                 />

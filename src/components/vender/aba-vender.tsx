@@ -13,7 +13,6 @@ import { lerValor, moeda } from "@/lib/formato";
 import {
   FORMAS_PAGAMENTO,
   ROTULO_FORMA,
-  TAMANHOS,
   totalEstoque,
   type FormaPagamento,
   type ProdutoComEstoque,
@@ -61,7 +60,7 @@ export function ListaProdutos({
     return produtos.filter((p) => {
       if (design && p.nome !== design) return false;
       if (!termo) return true;
-      const alvo = `${p.nome} ${p.sku} ${p.cor}`
+      const alvo = `${p.nome} ${p.sku} ${p.cor} ${p.tamanhos.join(" ")}`
         .toLowerCase()
         .normalize("NFD")
         .replace(/[̀-ͯ]/g, "");
@@ -124,12 +123,13 @@ export function ListaProdutos({
                   <div className="min-w-0 flex-1 text-left">
                     <p className="truncate text-lg font-bold leading-tight">{p.nome}</p>
                     <p className="truncate text-sm text-suave">
-                      {p.cor} · {p.sku}
+                      {p.cor ? `${p.cor} · ` : ""}
+                      {p.sku}
                     </p>
                     <p className="num mt-0.5 text-lg font-extrabold">{moeda(p.preco)}</p>
                     {modoConsulta && (
                       <div className="num mt-1.5 flex flex-wrap gap-1">
-                        {TAMANHOS.map((t) => (
+                        {p.tamanhos.map((t) => (
                           <span
                             key={t}
                             className={cx(
@@ -181,12 +181,22 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
   const { perfil } = useAuth();
   const avisar = useAviso();
   const online = useOnline();
-  const primeiroDisponivel = TAMANHOS.find((t) => produto.estoque[t] > 0) ?? null;
+  const primeiroDisponivel = produto.tamanhos.find((t) => produto.estoque[t] > 0) ?? null;
   // se só existe um tamanho disponível, já começa selecionado
   const [tamanho, setTamanho] = useState<Tamanho | null>(() => {
-    const disponiveis = TAMANHOS.filter((t) => produto.estoque[t] > 0);
+    const disponiveis = produto.tamanhos.filter((t) => produto.estoque[t] > 0);
     return disponiveis.length === 1 ? disponiveis[0] : null;
   });
+  const [buscaTamanho, setBuscaTamanho] = useState("");
+  const muitosTamanhos = produto.tamanhos.length > 6;
+  const termoTam = buscaTamanho.trim().toUpperCase();
+  const tamanhosVisiveis = termoTam ? produto.tamanhos.filter((t) => t.startsWith(termoTam) || t === tamanho) : produto.tamanhos;
+
+  function digitarTamanho(texto: string) {
+    setBuscaTamanho(texto);
+    const exato = produto.tamanhos.find((t) => t === texto.trim().toUpperCase());
+    if (exato && (produto.estoque[exato] ?? 0) > 0) escolherTamanho(exato);
+  }
   const [quantidade, setQuantidade] = useState(1);
   const [valorTexto, setValorTexto] = useState(produto.preco.toFixed(2).replace(".", ","));
   const [forma, setForma] = useState<FormaPagamento | null>(null);
@@ -194,7 +204,7 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  const disponivel = tamanho ? produto.estoque[tamanho] : 0;
+  const disponivel = tamanho ? (produto.estoque[tamanho] ?? 0) : 0;
   const valorUnitario = lerValor(valorTexto);
   const valorValido = Number.isFinite(valorUnitario) && valorUnitario >= 0 && valorTexto.trim() !== "";
   const total = valorValido ? Math.round(valorUnitario * quantidade * 100) / 100 : 0;
@@ -204,7 +214,7 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
 
   function escolherTamanho(t: Tamanho) {
     setTamanho(t);
-    setQuantidade((q) => Math.min(q, Math.max(1, produto.estoque[t])));
+    setQuantidade((q) => Math.min(q, Math.max(1, produto.estoque[t] ?? 0)));
   }
 
   async function confirmar() {
@@ -256,22 +266,41 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
         <div className="min-w-0">
           <p className="truncate text-xl font-bold leading-tight">{produto.nome}</p>
           <p className="truncate text-sm text-suave">
-            {produto.cor} · {produto.sku}
+            {produto.cor ? `${produto.cor} · ` : ""}
+            {produto.sku}
           </p>
           <p className="num font-bold">{moeda(produto.preco)}</p>
         </div>
       </div>
 
       <section>
-        <Rotulo>1. Tamanho</Rotulo>
-        <Escolha
-          nome="Tamanho"
-          opcoes={TAMANHOS}
-          valor={tamanho}
-          aoMudar={escolherTamanho}
-          desabilitada={(t) => produto.estoque[t] <= 0}
-          detalhe={(t) => (produto.estoque[t] > 0 ? `${produto.estoque[t]} un.` : "esgotado")}
-        />
+        <Rotulo htmlFor="tam-digitado">1. Tamanho</Rotulo>
+        {muitosTamanhos && (
+          <Campo
+            id="tam-digitado"
+            placeholder="Digite o tamanho (ex.: G2, 38)"
+            autoCapitalize="characters"
+            autoComplete="off"
+            value={buscaTamanho}
+            onChange={(e) => digitarTamanho(e.target.value)}
+            className="mb-2 min-h-14 text-lg uppercase"
+          />
+        )}
+        {tamanhosVisiveis.length === 0 ? (
+          <p className="rounded-tema bg-superficie-2 p-3 text-sm font-semibold">
+            Nenhum tamanho “{termoTam}” neste produto. Tamanhos: {produto.tamanhos.join(", ")}
+          </p>
+        ) : (
+          <Escolha
+            nome="Tamanho"
+            opcoes={tamanhosVisiveis}
+            valor={tamanho}
+            aoMudar={escolherTamanho}
+            colunas={Math.min(5, Math.max(3, tamanhosVisiveis.length))}
+            desabilitada={(t) => (produto.estoque[t] ?? 0) <= 0}
+            detalhe={(t) => ((produto.estoque[t] ?? 0) > 0 ? `${produto.estoque[t]} un.` : "esgotado")}
+          />
+        )}
         {!tamanho && primeiroDisponivel && <p className="mt-1.5 text-sm text-suave">Toque no tamanho vendido.</p>}
       </section>
 
