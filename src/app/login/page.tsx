@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { inicioDoPapel, useAuth } from "@/components/auth";
+import { BotaoInstalar } from "@/components/instalar-app";
 import { Logo } from "@/components/logo";
 import { BotaoTema } from "@/components/tema";
 import { Aviso, Botao, Campo, Rotulo } from "@/components/ui";
@@ -100,6 +101,7 @@ export default function Login() {
         <Botao type="submit" tamanho="xl" bloco carregando={enviando}>
           <LogIn className="size-6" /> Entrar
         </Botao>
+        <BotaoInstalar />
       </form>
     </main>
   );

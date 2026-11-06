@@ -3,6 +3,8 @@
 import { useEffect, type ReactNode } from "react";
 import { ProvedorAuth } from "./auth";
 import { ProvedorAvisos } from "./avisos";
+// registra cedo o aviso de "pode instalar" do navegador
+import "./instalar-app";
 
 function registrarServiceWorker() {
   if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;

@@ -6,6 +6,7 @@ import { History, LayoutDashboard, LogOut, Package, ShoppingBag } from "lucide-r
 import { useAuth } from "@/components/auth";
 import { useAviso } from "@/components/avisos";
 import { useFila, useSincronizacaoAutomatica } from "@/components/conexao";
+import { BotaoInstalar, FaixaInstalar } from "@/components/instalar-app";
 import { Emblema } from "@/components/logo";
 import { StatusConexao } from "@/components/status";
 import { BotaoTema } from "@/components/tema";
@@ -70,6 +71,7 @@ export default function PaginaVender() {
       </header>
 
       <main className="px-3 pt-4 pb-seguro">
+        <FaixaInstalar />
         {semConfirmacao && (
           <Aviso className="mb-3">Modo offline: você pode continuar dando baixa. Tudo será enviado quando a conexão voltar.</Aviso>
         )}
@@ -135,6 +137,7 @@ export default function PaginaVender() {
               <LayoutDashboard className="size-6" /> Painel do dono
             </Link>
           )}
+          <BotaoInstalar />
           {pendentes > 0 && (
             <Aviso>
               Você tem {pendentes} baixa(s) ainda não enviada(s). Não saia da conta até elas serem enviadas, senão ficam só
