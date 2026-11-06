@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeft, Banknote, Check, CreditCard, HandCoins, Minus, Plus, QrCode, Search, X } from "lucide-react";
 import { useAuth } from "../auth";
 import { useAviso } from "../avisos";
@@ -182,19 +182,17 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
   const avisar = useAviso();
   const online = useOnline();
   const primeiroDisponivel = TAMANHOS.find((t) => produto.estoque[t] > 0) ?? null;
-  const [tamanho, setTamanho] = useState<Tamanho | null>(null);
+  // se só existe um tamanho disponível, já começa selecionado
+  const [tamanho, setTamanho] = useState<Tamanho | null>(() => {
+    const disponiveis = TAMANHOS.filter((t) => produto.estoque[t] > 0);
+    return disponiveis.length === 1 ? disponiveis[0] : null;
+  });
   const [quantidade, setQuantidade] = useState(1);
   const [valorTexto, setValorTexto] = useState(produto.preco.toFixed(2).replace(".", ","));
   const [forma, setForma] = useState<FormaPagamento | null>(null);
   const [observacao, setObservacao] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
-
-  // se só existe um tamanho disponível, já deixa selecionado
-  useEffect(() => {
-    const disponiveis = TAMANHOS.filter((t) => produto.estoque[t] > 0);
-    if (disponiveis.length === 1) setTamanho(disponiveis[0]);
-  }, [produto.estoque]);
 
   const disponivel = tamanho ? produto.estoque[tamanho] : 0;
   const valorUnitario = lerValor(valorTexto);
@@ -204,9 +202,10 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
   const excede = !!tamanho && quantidade > disponivel;
   const pronto = !!tamanho && !excede && quantidade > 0 && valorValido && !!forma;
 
-  useEffect(() => {
-    if (tamanho && quantidade > produto.estoque[tamanho]) setQuantidade(Math.max(1, produto.estoque[tamanho]));
-  }, [tamanho, produto.estoque, quantidade]);
+  function escolherTamanho(t: Tamanho) {
+    setTamanho(t);
+    setQuantidade((q) => Math.min(q, Math.max(1, produto.estoque[t])));
+  }
 
   async function confirmar() {
     setErro(null);
@@ -269,7 +268,7 @@ function FormBaixa({ produto, aoVoltar }: { produto: ProdutoComEstoque; aoVoltar
           nome="Tamanho"
           opcoes={TAMANHOS}
           valor={tamanho}
-          aoMudar={setTamanho}
+          aoMudar={escolherTamanho}
           desabilitada={(t) => produto.estoque[t] <= 0}
           detalhe={(t) => (produto.estoque[t] > 0 ? `${produto.estoque[t]} un.` : "esgotado")}
         />
