@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
-/** Script que aplica o tema antes da página aparecer (evita "piscar"). */
-export const SCRIPT_TEMA = `(function(){try{var t=localStorage.getItem('insista:tema');var e=t?t==='escuro':matchMedia('(prefers-color-scheme: dark)').matches;if(e)document.documentElement.classList.add('dark');}catch(_){}})();`;
+/** Script que aplica o tema antes da página aparecer (evita "piscar").
+ *  Começa SEMPRE no modo claro; só fica escuro se a pessoa escolher. */
+export const SCRIPT_TEMA = `(function(){try{if(localStorage.getItem('insista:tema')==='escuro')document.documentElement.classList.add('dark');}catch(_){}})();`;
 
 export function BotaoTema({ className = "" }: { className?: string }) {
   const [escuro, setEscuro] = useState(false);

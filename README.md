@@ -10,6 +10,21 @@ Cada vendedor dá baixa pelo celular — **mesmo sem internet** — e o dono aco
 
 ---
 
+## Catálogo público (site)
+
+A página inicial (`/`) é o **catálogo da loja**: 75 estampas com código, coleções (Máquinas, Pecuária, Cavalos & Cavalgada, Lavoura, Drones, Orgulho Brasil), filtros por cor, busca por nome ou código, página de cada produto com galeria e tabela de medidas, e **sacola que envia o pedido pronto pelo WhatsApp**. Modo claro (padrão) e escuro.
+
+- **Preço, WhatsApp e coleções:** `src/catalogo/config.ts`
+- **Lista de produtos:** `src/catalogo/produtos.ts` (código = número da pasta original)
+- **Imagens:** `public/catalogo/<código>/` → `camiseta.webp` (sem fundo), `anuncio.webp`, `medidas.webp` e versões `-p` menores
+- **Cores do site:** `src/app/tema.css` (bloco "SITE / CATÁLOGO")
+
+Para incluir uma estampa nova: crie a pasta `public/catalogo/<código>/` com as imagens e adicione uma linha em `src/catalogo/produtos.ts`.
+
+O sistema da equipe continua em `/login` (link "Área da equipe" no rodapé do site). O app instalado nos celulares abre direto na área da equipe.
+
+---
+
 ## Sumário
 
 1. [O que o sistema faz](#o-que-o-sistema-faz)

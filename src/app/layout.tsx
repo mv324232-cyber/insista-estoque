@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow_Condensed, Inter } from "next/font/google";
-import { Provedores } from "@/components/provedores";
+import { Anton, Barlow_Condensed, Inter } from "next/font/google";
 import { SCRIPT_TEMA } from "@/components/tema";
 import "./globals.css";
 
@@ -10,10 +9,12 @@ const titulo = Barlow_Condensed({
   subsets: ["latin"],
   weight: ["600", "700", "800"],
 });
+const display = Anton({ variable: "--font-anton", subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
-  title: { default: "Insista — Estoque e Vendas", template: "%s · Insista" },
-  description: "Controle de estoque e baixa de vendas da Insista.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://insista-estoque.vercel.app"),
+  title: { default: "Insista — Camisetas Agro Manga Longa", template: "%s · Insista" },
+  description: "Camisetas manga longa agro com estampa total, proteção UV50+ e tecido dry. 75 estampas exclusivas por R$ 49,90.",
   applicationName: "Insista",
   appleWebApp: { capable: true, title: "Insista", statusBarStyle: "black-translucent" },
   icons: {
@@ -31,13 +32,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${texto.variable} ${titulo.variable} antialiased`} suppressHydrationWarning>
+    <html lang="pt-BR" className={`${texto.variable} ${titulo.variable} ${display.variable} antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
       </head>
-      <body className="min-h-dvh">
-        <Provedores>{children}</Provedores>
-      </body>
+      <body className="min-h-dvh">{children}</body>
     </html>
   );
 }

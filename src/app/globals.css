@@ -25,6 +25,19 @@
   --radius-tema-g: var(--raio-grande);
   --font-sans: var(--font-texto), ui-sans-serif, system-ui, sans-serif;
   --font-marca: var(--font-titulo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), "Impact", ui-sans-serif, sans-serif;
+
+  /* ===== Loja / catálogo (cores em src/app/tema.css) ===== */
+  --color-l-preto: var(--l-fundo);
+  --color-l-carvao: var(--l-fundo-2);
+  --color-l-couro: var(--l-cartao);
+  --color-l-couro-2: var(--l-cartao-2);
+  --color-l-creme: var(--l-texto);
+  --color-l-areia: var(--l-texto-suave);
+  --color-l-vermelho: var(--l-vermelho);
+  --color-l-vermelho-escuro: var(--l-vermelho-escuro);
+  --color-l-trigo: var(--l-trigo);
+  --color-l-tinta: var(--l-tinta);
 }
 
 html {
@@ -70,3 +83,80 @@ dialog::backdrop {
     display: none !important;
   }
 }
+
+/* ================================================================
+   LOJA (catálogo público)
+   ================================================================ */
+.loja {
+  background: var(--color-l-preto);
+  color: var(--color-l-creme);
+  color-scheme: light;
+}
+.dark .loja {
+  color-scheme: dark;
+}
+
+/* textura de grão (papel/couro) sobre seções */
+.grao {
+  position: relative;
+  isolation: isolate;
+}
+.grao::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.texto-contorno {
+  -webkit-text-stroke: 1.5px currentColor;
+  color: transparent;
+}
+
+/* pesponto (costura de couro) */
+.pesponto {
+  background-image: linear-gradient(90deg, var(--color-l-trigo) 50%, transparent 0);
+  background-size: 14px 2px;
+  background-repeat: repeat-x;
+  height: 2px;
+  opacity: 0.55;
+}
+
+@keyframes letreiro {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.letreiro {
+  animation: letreiro 38s linear infinite;
+}
+
+@keyframes flutuar {
+  0%, 100% { transform: translateY(0) rotate(var(--giro, 0deg)); }
+  50% { transform: translateY(-14px) rotate(var(--giro, 0deg)); }
+}
+.flutuar {
+  animation: flutuar 6s ease-in-out infinite;
+}
+
+/* sulcos da lavoura em movimento (hero) */
+@keyframes sulcos {
+  from { background-position-y: 0; }
+  to { background-position-y: 64px; }
+}
+.sulcos {
+  background-image: repeating-linear-gradient(0deg, color-mix(in srgb, var(--l-trigo) 22%, transparent) 0 2px, transparent 2px 64px);
+  animation: sulcos 2.4s linear infinite;
+  transform: perspective(420px) rotateX(62deg);
+  transform-origin: 50% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letreiro, .flutuar, .sulcos { animation: none; }
+}
+
+.sem-barra::-webkit-scrollbar { display: none; }
+.sem-barra { scrollbar-width: none; }

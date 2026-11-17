@@ -6,11 +6,11 @@
  *  - Fotos dos produtos (Supabase Storage): cache primeiro.
  *  - Chamadas à API do Supabase: nunca passam pelo cache (a fila offline cuida disso).
  */
-const VERSAO = "insista-v2";
+const VERSAO = "insista-v3";
 const CACHE_PAGINAS = `${VERSAO}-paginas`;
 const CACHE_ESTATICOS = `${VERSAO}-estaticos`;
 const CACHE_FOTOS = `${VERSAO}-fotos`;
-const PAGINAS_ESSENCIAIS = ["/vender", "/login", "/"];
+const PAGINAS_ESSENCIAIS = ["/vender", "/login", "/inicio"];
 const ARQUIVOS_BASE = ["/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/offline.html"];
 
 /** Lê o HTML de uma página e guarda também os JS/CSS que ela usa. */

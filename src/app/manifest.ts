@@ -2,10 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Insista — Estoque e Vendas",
+    name: "Insista — Vendas",
     short_name: "Insista",
     description: "Baixa de vendas e controle de estoque da Insista.",
-    start_url: "/",
+    start_url: "/inicio",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

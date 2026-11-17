@@ -33,6 +33,18 @@
   /* Formas */
   --raio: 14px;
   --raio-grande: 20px;
+
+  /* ===== SITE / CATÁLOGO — modo claro (padrão) ===== */
+  --l-fundo: #faf6ef;        /* papel creme */
+  --l-fundo-2: #f1e9dc;      /* seções alternadas */
+  --l-cartao: #ffffff;       /* cartões */
+  --l-cartao-2: #e8dfcf;
+  --l-texto: #1b1612;        /* texto principal */
+  --l-texto-suave: #66594a;
+  --l-vermelho: #c8102e;     /* vermelho Insista */
+  --l-vermelho-escuro: #a30d25;
+  --l-trigo: #8a5d12;        /* dourado (mais escuro no claro, para contraste) */
+  --l-tinta: #1b1612;        /* base de bordas e transparências */
 }
 
 .dark {
@@ -56,4 +68,16 @@
   --cor-alerta-fundo: #352710;
   --cor-perigo: #ff8a8a;
   --cor-perigo-fundo: #3a1414;
+
+  /* ===== SITE / CATÁLOGO — modo escuro ===== */
+  --l-fundo: #0b0a09;
+  --l-fundo-2: #14110e;
+  --l-cartao: #201a14;
+  --l-cartao-2: #2b231b;
+  --l-texto: #f4ede1;
+  --l-texto-suave: #b9ab95;
+  --l-vermelho: #d0142f;
+  --l-vermelho-escuro: #9e0f24;
+  --l-trigo: #e2b65a;
+  --l-tinta: #ffffff;
 }
