@@ -86,10 +86,10 @@ export function ConteudoCompra({ produto, embutido = false }: { produto: Produto
         <img src={imagem(produto.codigo, "camiseta")} alt={produto.nome} className="w-full drop-shadow-[0_20px_25px_rgb(0_0_0/0.6)]" />
       </div>
       <div className="p-5 sm:p-7 sm:pt-12">
-        <p className="font-display text-sm tracking-widest text-l-trigo">
+        <p className="font-display text-sm text-l-trigo">
           Nº {produto.codigo} • {nomeColecao(produto.colecao)}
         </p>
-        <h2 className="mt-1 font-display text-3xl uppercase leading-none tracking-wide">{produto.nome}</h2>
+        <h2 className="mt-1 font-display text-3xl uppercase leading-none">{produto.nome}</h2>
         <p className="mt-2 text-sm text-l-areia">{produto.descricao}</p>
         <Link href={`/produto/${produto.codigo}`} onClick={() => abrirCompra(null)} className="mt-2 inline-block text-sm font-semibold text-l-trigo underline underline-offset-2">
           Ver fotos e detalhes

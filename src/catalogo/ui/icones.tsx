@@ -19,3 +19,24 @@ export function Espiga({ className = "size-8" }: { className?: string }) {
     </svg>
   );
 }
+
+/** Ferradura (cavalos e cavalgada) */
+export function Ferradura({ className = "size-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+      <path d="M7 21H4.5L4 13a8 8 0 0 1 16 0l-.5 8H17l.4-8a5.4 5.4 0 0 0-10.8 0Z" />
+      <path d="M5.2 9.5h.01M18.8 9.5h.01M4.6 14h.01M19.4 14h.01M5 18h.01M19 18h.01" strokeWidth="2.6" />
+    </svg>
+  );
+}
+
+/** Chifres de boi (pecuária) */
+export function Chifres({ className = "size-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M2 5c1 3.5 3.5 5 6.5 5M22 5c-1 3.5-3.5 5-6.5 5" />
+      <path d="M8.5 9.5h7l-.8 7.5L12 20l-2.7-3-.8-7.5Z" />
+      <path d="M10.6 13h.01M13.4 13h.01" strokeWidth="2.6" />
+    </svg>
+  );
+}

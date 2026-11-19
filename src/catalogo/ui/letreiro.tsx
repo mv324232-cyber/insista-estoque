@@ -1,4 +1,4 @@
-import { Espiga } from "./icones";
+import { Wheat } from "lucide-react";
 
 const FRASES = [
   "Proteção UV50+",
@@ -7,19 +7,19 @@ const FRASES = [
   "Não desbota",
   "Secagem rápida",
   "Envio para todo o Brasil",
-  "Feita para quem vive o agro",
+  "Feita pra quem vive o agro",
 ];
 
-/** Faixa vermelha inclinada com benefícios rolando. */
+/** Faixa de couro costurado com os benefícios rolando. */
 export function Letreiro() {
   const itens = [...FRASES, ...FRASES];
   return (
-    <div className="relative z-10 -my-6 -rotate-2 overflow-hidden border-y-2 border-black/30 bg-l-vermelho py-4 shadow-[0_20px_40px_-20px_rgb(208_20_47/0.8)]" aria-label="Benefícios">
-      <div className="letreiro flex w-max items-center gap-8">
+    <div className="couro costura relative z-10 overflow-hidden py-5 shadow-[0_14px_30px_-14px_rgb(60_30_10/0.7)]" aria-label="Benefícios">
+      <div className="letreiro flex w-max items-center gap-10">
         {itens.map((f, i) => (
-          <span key={i} className="flex items-center gap-8 font-display text-2xl uppercase tracking-wider text-white sm:text-3xl" aria-hidden={i >= FRASES.length}>
+          <span key={i} className="flex items-center gap-10 whitespace-nowrap font-display text-lg uppercase text-[#f8e7c4] sm:text-xl" aria-hidden={i >= FRASES.length}>
             {f}
-            <Espiga className="size-6 text-white/70" />
+            <Wheat className="size-5 text-[#f4c56a]" />
           </span>
         ))}
       </div>

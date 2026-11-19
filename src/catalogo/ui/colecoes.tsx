@@ -1,21 +1,33 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Drone, Flag, Tractor, Wheat } from "lucide-react";
+import { Chifres, Ferradura } from "./icones";
+import type { ColecaoId } from "../tipos";
 import { COLECOES, imagem } from "../config";
 import { irParaColecao } from "../filtro";
 import { PRODUTOS } from "../produtos";
 import { TituloSecao } from "./revelar";
 
+const ICONE: Record<ColecaoId, (p: { className?: string }) => React.ReactNode> = {
+  maquinas: Tractor,
+  pecuaria: Chifres,
+  cavalos: Ferradura,
+  lavoura: Wheat,
+  drones: Drone,
+  brasil: Flag,
+};
+
 export function Colecoes() {
   return (
     <section id="colecoes" className="grao scroll-mt-20 bg-l-carvao px-4 pb-20 pt-28 sm:px-6">
-      <TituloSecao selo="Escolha seu estilo" titulo="Seis jeitos de" destaque="vestir o agro">
+      <TituloSecao selo="Escolha o seu estilo" titulo="Seis jeitos de" destaque="vestir o agro">
         Cada coleção conta uma parte da vida no campo. Toque e veja todas as estampas.
       </TituloSecao>
       <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
         {COLECOES.map((c, i) => {
           const qtd = PRODUTOS.filter((p) => p.colecao === c.id).length;
+          const Icone = ICONE[c.id];
           return (
             <motion.button
               key={c.id}
@@ -37,9 +49,12 @@ export function Colecoes() {
                 <img src={imagem(c.capa, "camiseta-p")} alt="" loading="lazy" className="w-full" />
               </motion.span>
               <span className="absolute inset-x-0 bottom-0 -z-10 h-2/3 bg-gradient-to-t from-l-preto via-l-preto/85 to-transparent" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-l-trigo">{qtd} estampas</span>
+              <span className="couro absolute left-3 top-3 grid size-11 place-items-center rounded-full text-[#f8e7c4] shadow-md ring-2 ring-[#f4c56a]/60 ring-offset-2 ring-offset-transparent sm:left-4 sm:top-4 sm:size-12">
+                <Icone className="size-6" />
+              </span>
+              <span className="font-script text-lg text-l-trigo">{qtd} estampas</span>
               <span className="mt-1 flex items-end justify-between gap-2">
-                <span className="font-display text-2xl uppercase leading-none tracking-wide sm:text-4xl">{c.nome}</span>
+                <span className="font-display text-xl uppercase leading-none sm:text-3xl">{c.nome}</span>
                 <ArrowUpRight className="size-6 shrink-0 text-l-vermelho transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
               </span>
               <span className="mt-2 hidden text-sm text-l-areia sm:block">{c.chamada}</span>

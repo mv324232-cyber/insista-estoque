@@ -24,7 +24,7 @@ export function Beneficios() {
         <div>
           <Revelar>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-l-trigo">Feita para a lida</p>
-            <h2 className="font-display text-5xl uppercase leading-[0.92] tracking-wide sm:text-7xl">
+            <h2 className="font-display text-5xl uppercase leading-[0.92] sm:text-7xl">
               Qualidade que <span className="text-l-vermelho">aguenta</span> o tranco.
             </h2>
             <p className="mt-5 max-w-lg text-lg text-l-areia">
@@ -37,7 +37,7 @@ export function Beneficios() {
               <Revelar key={b.titulo} atraso={i * 0.08}>
                 <div className="h-full rounded-2xl border border-l-tinta/10 bg-l-preto/40 p-5 transition hover:border-l-trigo/40">
                   <b.icone className="size-8 text-l-trigo" />
-                  <p className="mt-3 font-display text-xl uppercase tracking-wide">{b.titulo}</p>
+                  <p className="mt-3 font-display text-xl uppercase">{b.titulo}</p>
                   <p className="mt-1 text-sm text-l-areia">{b.texto}</p>
                 </div>
               </Revelar>
@@ -54,7 +54,7 @@ export function Beneficios() {
             whileInView={{ rotate: -8, scale: 1, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 140, damping: 12, delay: 0.3 }}
-            className="absolute -left-2 -top-5 grid size-32 place-items-center rounded-full border-4 border-dashed border-white/60 bg-l-vermelho text-center text-white shadow-xl sm:-left-6 sm:size-40"
+            className="absolute -left-2 -top-5 grid size-32 place-items-center rounded-full couro border-4 border-dashed border-[#f4c56a]/80 text-center text-[#f8e7c4] shadow-xl sm:-left-6 sm:size-40"
           >
             <span>
               <span className="block text-xs font-bold uppercase tracking-widest">cada uma</span>
@@ -175,7 +175,7 @@ export function ComoComprar() {
                 <p.icone className="size-8" />
               </span>
               <span className="absolute right-4 top-3 font-display text-5xl text-l-tinta/[0.07]">0{i + 1}</span>
-              <p className="mt-4 font-display text-2xl uppercase tracking-wide">{p.titulo}</p>
+              <p className="mt-4 font-display text-2xl uppercase">{p.titulo}</p>
               <p className="mt-1 text-sm text-l-areia">{p.texto}</p>
             </div>
           </Revelar>
@@ -188,11 +188,12 @@ export function ComoComprar() {
 export function ChamadaFinal() {
   const vitrine = ["64", "09", "51", "14", "98"];
   return (
-    <section className="relative overflow-hidden bg-l-vermelho px-4 py-20 text-white sm:px-6">
+    <section className="couro costura relative overflow-hidden px-4 py-20 text-[#f8e7c4] sm:px-6">
       <div aria-hidden className="absolute inset-0 bg-[radial-gradient(80%_80%_at_80%_50%,rgb(0_0_0/0.35),transparent_70%)]" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
         <Revelar>
-          <h2 className="font-display text-5xl uppercase leading-[0.9] tracking-wide sm:text-7xl">
+          <p className="font-script text-3xl text-[#f4c56a]">Chegou a hora</p>
+          <h2 className="font-display text-4xl uppercase leading-[0.95] sm:text-6xl">
             Bora vestir
             <br />o agro?
           </h2>
@@ -240,7 +241,7 @@ export function Rodape() {
           <p className="mt-4 max-w-sm text-sm">
             Camisetas manga longa com estampa total para quem vive o agro. {PRODUTOS.length} estampas exclusivas, do trator à cavalgada.
           </p>
-          <p className="mt-4 flex items-center gap-2 font-display text-lg uppercase tracking-wider text-l-creme">
+          <p className="mt-4 flex items-center gap-2 font-display text-lg uppercase text-l-creme">
             <Espiga className="size-5 text-l-vermelho" /> {LOJA.slogan}
           </p>
         </div>

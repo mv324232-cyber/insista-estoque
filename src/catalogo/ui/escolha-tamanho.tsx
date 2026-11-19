@@ -34,7 +34,7 @@ export function EscolhaTamanho({
             role="radio"
             aria-checked={valor === t}
             onClick={() => aoMudar(t)}
-            className={`h-14 rounded-xl border-2 font-display text-2xl tracking-wide transition active:scale-95 ${
+            className={`h-14 rounded-xl border-2 font-display text-2xl transition active:scale-95 ${
               valor === t ? "border-l-vermelho bg-l-vermelho text-white" : erro ? "border-l-vermelho/60" : "border-l-tinta/15 hover:border-l-tinta/50"
             }`}
           >

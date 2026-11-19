@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Menu, ShoppingBag, X } from "lucide-react";
@@ -16,15 +17,15 @@ const LINKS = [
   { href: "/#como-comprar", rotulo: "Como comprar" },
 ];
 
-export function Marca({ compacta = false }: { compacta?: boolean }) {
+export function Marca({ compacta = false, sobreFoto = false }: { compacta?: boolean; sobreFoto?: boolean }) {
   return (
     <span className="flex items-center gap-2.5">
       <span className="grid size-10 place-items-center rounded-xl bg-l-vermelho text-white shadow-[0_6px_20px_-6px_rgb(208_20_47/0.8)]">
         <Espiga className="size-7" />
       </span>
       <span className="leading-none">
-        <span className="block font-display text-2xl uppercase tracking-[0.14em]">Insista</span>
-        {!compacta && <span className="hidden whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.32em] text-l-trigo sm:block">Agro • Manga longa</span>}
+        <span className="block font-display text-2xl uppercase">Insista</span>
+        {!compacta && <span className={`hidden whitespace-nowrap font-script text-sm sm:block ${sobreFoto ? "text-[#f4c56a]" : "text-l-trigo"}`}>agro • manga longa</span>}
       </span>
     </span>
   );
@@ -34,6 +35,9 @@ export function Cabecalho() {
   const { totalPecas, abrir, pulso } = useSacola();
   const [rolou, setRolou] = useState(false);
   const [menu, setMenu] = useState(false);
+  const pathname = usePathname();
+  // no topo da página inicial o cabeçalho fica sobre a cena de campo (escura)
+  const sobreFoto = pathname === "/" && !rolou && !menu;
 
   useEffect(() => {
     const f = () => setRolou(window.scrollY > 24);
@@ -45,16 +49,16 @@ export function Cabecalho() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        rolou || menu ? "border-b border-l-tinta/10 bg-l-preto/85 backdrop-blur-md" : "bg-transparent"
+        rolou || menu ? "border-b border-l-tinta/10 bg-l-preto/90 text-l-creme backdrop-blur-md" : sobreFoto ? "bg-transparent text-[#f8f2e7]" : "bg-transparent text-l-creme"
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-6">
         <Link href="/" aria-label="Insista — início" onClick={() => setMenu(false)}>
-          <Marca />
+          <Marca sobreFoto={sobreFoto} />
         </Link>
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Principal">
           {LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="group relative text-sm font-bold uppercase tracking-widest text-l-creme/80 hover:text-l-creme">
+            <a key={l.href} href={l.href} className="group relative text-sm font-bold uppercase tracking-wide opacity-85 hover:opacity-100">
               {l.rotulo}
               <span className="absolute -bottom-1.5 left-0 h-0.5 w-0 bg-l-vermelho transition-all duration-300 group-hover:w-full" />
             </a>
@@ -65,18 +69,18 @@ export function Cabecalho() {
             href={linkWhatsapp("Olá, Insista! Vi o catálogo e quero saber mais.")}
             target="_blank"
             rel="noopener"
-            className="hidden items-center gap-2 rounded-full border border-l-tinta/15 px-4 py-2.5 text-sm font-bold hover:border-[#25d366] hover:text-[#25d366] sm:flex"
+            className="hidden items-center gap-2 rounded-full border border-current/25 px-4 py-2.5 text-sm font-bold hover:border-[#25d366] hover:text-[#25d366] sm:flex"
           >
             <IconeWhatsapp /> {LOJA.whatsappExibicao}
           </a>
-          <BotaoTema className="border border-l-tinta/15 hover:!bg-l-tinta/10" />
+          <BotaoTema className="border border-current/25 hover:!bg-current/10" />
           <motion.button
             key={pulso}
             initial={pulso ? { scale: 0.8 } : false}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 500, damping: 12 }}
             onClick={abrir}
-            className="relative grid size-11 place-items-center rounded-full bg-l-creme text-l-preto"
+            className={`relative grid size-11 place-items-center rounded-full ${sobreFoto ? "bg-[#f8f2e7] text-[#1b1612]" : "bg-l-creme text-l-preto"}`}
             aria-label={`Abrir sacola (${totalPecas} peças)`}
           >
             <ShoppingBag className="size-5" />
@@ -87,7 +91,7 @@ export function Cabecalho() {
             )}
           </motion.button>
           <button
-            className="grid size-11 place-items-center rounded-full border border-l-tinta/15 lg:hidden"
+            className="grid size-11 place-items-center rounded-full border border-current/25 lg:hidden"
             onClick={() => setMenu((m) => !m)}
             aria-label={menu ? "Fechar menu" : "Abrir menu"}
             aria-expanded={menu}
@@ -115,7 +119,7 @@ export function Cabecalho() {
                   initial={{ x: -16, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.05 * i }}
-                  className="border-b border-l-tinta/5 py-4 font-display text-2xl uppercase tracking-wider"
+                  className="border-b border-l-tinta/5 py-4 font-display text-2xl uppercase"
                 >
                   {l.rotulo}
                 </motion.a>

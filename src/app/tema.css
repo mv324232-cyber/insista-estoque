@@ -35,7 +35,7 @@
   --raio-grande: 20px;
 
   /* ===== SITE / CATÁLOGO — modo claro (padrão) ===== */
-  --l-fundo: #faf6ef;        /* papel creme */
+  --l-fundo: #f8f2e7;        /* papel creme (kraft claro) */
   --l-fundo-2: #f1e9dc;      /* seções alternadas */
   --l-cartao: #ffffff;       /* cartões */
   --l-cartao-2: #e8dfcf;
@@ -45,6 +45,9 @@
   --l-vermelho-escuro: #a30d25;
   --l-trigo: #8a5d12;        /* dourado (mais escuro no claro, para contraste) */
   --l-tinta: #1b1612;        /* base de bordas e transparências */
+  --l-terra: #6b3f1f;        /* couro / terra */
+  --l-mata: #2f4a26;         /* verde-mata */
+  --l-palha: #e9d5a8;        /* palha / kraft */
 }
 
 .dark {
@@ -80,4 +83,7 @@
   --l-vermelho-escuro: #9e0f24;
   --l-trigo: #e2b65a;
   --l-tinta: #ffffff;
+  --l-terra: #8a5530;
+  --l-mata: #6f8f4e;
+  --l-palha: #3a2c1d;
 }

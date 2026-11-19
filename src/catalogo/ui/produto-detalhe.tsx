@@ -92,10 +92,10 @@ export function ProdutoDetalhe({ produto }: { produto: ProdutoCatalogo }) {
 
             {/* informações e compra */}
             <div className="lg:sticky lg:top-28 lg:self-start">
-              <p className="font-display text-base tracking-[0.2em] text-l-trigo">
+              <p className="font-display text-base text-l-trigo">
                 Nº {produto.codigo} • {nomeColecao(produto.colecao)}
               </p>
-              <h1 className="mt-2 font-display text-4xl uppercase leading-[0.95] tracking-wide sm:text-6xl">{produto.nome}</h1>
+              <h1 className="mt-2 font-display text-4xl uppercase leading-[0.95] sm:text-6xl">{produto.nome}</h1>
               <p className="mt-3 text-lg text-l-areia">{produto.descricao}</p>
               <p className="mt-5 flex items-baseline gap-3">
                 <span className="font-display text-5xl">{precoTexto(LOJA.preco)}</span>
@@ -128,7 +128,7 @@ export function ProdutoDetalhe({ produto }: { produto: ProdutoCatalogo }) {
       {relacionados.length > 0 && (
         <section className="bg-l-carvao px-3 py-16 sm:px-6">
           <div className="mx-auto max-w-7xl">
-            <h2 className="mb-6 font-display text-3xl uppercase tracking-wide sm:text-4xl">
+            <h2 className="mb-6 font-display text-3xl uppercase sm:text-4xl">
               Mais da coleção <span className="text-l-vermelho">{nomeColecao(produto.colecao)}</span>
             </h2>
             <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4">

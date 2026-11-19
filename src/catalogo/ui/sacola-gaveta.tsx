@@ -17,7 +17,7 @@ export function SacolaGaveta() {
   return (
     <Gaveta aberta={aberta} aoFechar={fechar} titulo="Sacola">
       <div className="flex items-center justify-between border-b border-l-tinta/10 px-5 py-4">
-        <h2 className="flex items-center gap-2 font-display text-2xl uppercase tracking-wide">
+        <h2 className="flex items-center gap-2 font-display text-2xl uppercase">
           <ShoppingBag className="size-6 text-l-vermelho" /> Sua sacola
         </h2>
         <button onClick={fechar} className="grid size-11 place-items-center rounded-full hover:bg-l-tinta/10" aria-label="Fechar sacola">
@@ -52,7 +52,7 @@ export function SacolaGaveta() {
                     <img src={imagem(i.codigo, "camiseta-p")} alt="" className="w-full" />
                   </Link>
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-xs tracking-widest text-l-trigo">Nº {i.codigo}</p>
+                    <p className="font-display text-xs text-l-trigo">Nº {i.codigo}</p>
                     <p className="line-clamp-2 text-sm font-bold uppercase leading-tight">{i.produto.nome}</p>
                     <p className="mt-0.5 text-sm text-l-areia">Tamanho {i.tamanho}</p>
                     <div className="mt-2 flex items-center justify-between">

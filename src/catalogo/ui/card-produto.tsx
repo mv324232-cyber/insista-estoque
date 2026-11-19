@@ -20,8 +20,8 @@ export function CardProduto({ produto, indice = 0 }: { produto: ProdutoCatalogo;
     >
       <Link href={`/produto/${produto.codigo}`} className="relative flex aspect-[5/4] items-center justify-center px-2 pt-8 sm:aspect-[4/3] sm:px-4" aria-label={`${produto.nome} — ver detalhes`}>
         <span className="absolute inset-0 bg-[radial-gradient(60%_55%_at_50%_45%,rgb(208_20_47/0.22),transparent_70%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-        <span className="absolute left-3 top-3 rounded-md bg-l-preto/80 px-2 py-1 font-display text-sm tracking-wider text-l-trigo sm:left-4 sm:top-4">
-          Nº {produto.codigo}
+        <span className="absolute left-3 top-3 grid size-11 place-items-center rounded-full border-2 border-dashed border-l-trigo/70 bg-l-couro font-display text-sm text-l-trigo sm:left-4 sm:top-4 sm:size-12">
+          {produto.codigo}
         </span>
         <span
           className="absolute right-3 top-3.5 size-4 rounded-full border border-l-tinta/30 sm:right-4 sm:top-4"
@@ -47,7 +47,7 @@ export function CardProduto({ produto, indice = 0 }: { produto: ProdutoCatalogo;
           </Link>
         </h3>
         <div className="mt-auto flex flex-col gap-2 pt-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-display text-xl tracking-wide sm:text-2xl">{precoTexto()}</p>
+          <p className="font-display text-xl sm:text-2xl">{precoTexto()}</p>
           <button
             onClick={() => abrirCompra(produto.codigo)}
             className="inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-lg bg-l-vermelho px-3 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-l-vermelho-escuro active:scale-95 sm:w-auto sm:px-4 sm:text-sm"

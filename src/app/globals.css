@@ -25,7 +25,8 @@
   --radius-tema-g: var(--raio-grande);
   --font-sans: var(--font-texto), ui-sans-serif, system-ui, sans-serif;
   --font-marca: var(--font-titulo), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-anton), "Impact", ui-sans-serif, sans-serif;
+  --font-display: var(--font-slab), Georgia, serif;
+  --font-script: var(--font-manuscrita), cursive;
 
   /* ===== Loja / catálogo (cores em src/app/tema.css) ===== */
   --color-l-preto: var(--l-fundo);
@@ -38,6 +39,9 @@
   --color-l-vermelho-escuro: var(--l-vermelho-escuro);
   --color-l-trigo: var(--l-trigo);
   --color-l-tinta: var(--l-tinta);
+  --color-l-terra: var(--l-terra);
+  --color-l-mata: var(--l-mata);
+  --color-l-palha: var(--l-palha);
 }
 
 html {
@@ -160,3 +164,64 @@ dialog::backdrop {
 
 .sem-barra::-webkit-scrollbar { display: none; }
 .sem-barra { scrollbar-width: none; }
+
+/* ================================================================
+   CENA DE CAMPO (fundo animado do topo do site)
+   ================================================================ */
+.cena-campo svg * { transform-box: fill-box; }
+@keyframes cena-trator { from { transform: translateX(-260px); } to { transform: translateX(1860px); } }
+.cena-trator { animation: cena-trator 34s linear infinite; }
+@keyframes cena-colheitadeira { from { transform: translateX(1700px); } to { transform: translateX(-200px); } }
+.cena-colheitadeira { animation: cena-colheitadeira 90s linear infinite; animation-delay: -40s; }
+@keyframes cena-roda { to { transform: rotate(360deg); } }
+.cena-roda { transform-origin: center; animation: cena-roda 1.6s linear infinite; }
+@keyframes cena-poeira {
+  0% { transform: translate(0, 0) scale(.4); opacity: .55; }
+  100% { transform: translate(-90px, -46px) scale(2.4); opacity: 0; }
+}
+.cena-poeira { transform-origin: center; animation: cena-poeira 3.6s ease-out infinite; }
+@keyframes cena-balanca {
+  0%, 100% { transform: rotate(-3.5deg); }
+  50% { transform: rotate(3.5deg); }
+}
+.cena-balanca { transform-origin: 50% 100%; animation: cena-balanca 4s ease-in-out infinite; }
+@keyframes cena-sol { 0%, 100% { opacity: .92; } 50% { opacity: 1; } }
+.cena-sol { animation: cena-sol 6s ease-in-out infinite; filter: drop-shadow(0 0 40px #ffcf7a); }
+@keyframes cena-nuvens { from { transform: translateX(0); } to { transform: translateX(-500px); } }
+.cena-nuvens { animation: cena-nuvens 120s linear infinite alternate; }
+@keyframes cena-voo { from { transform: translateX(-200px) translateY(0); } to { transform: translateX(1900px) translateY(-60px); } }
+.cena-voo { animation: cena-voo 26s linear infinite; }
+@keyframes cena-asa { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(-.6); } }
+.cena-asa { transform-origin: center; animation: cena-asa .5s ease-in-out infinite; }
+@keyframes cena-particulas { from { background-position: 0 0, 0 0; } to { background-position: 300px -600px, -200px -400px; } }
+.cena-particulas {
+  background-image:
+    radial-gradient(circle, rgb(255 214 140 / .55) 0 1.5px, transparent 2px),
+    radial-gradient(circle, rgb(255 230 180 / .35) 0 1px, transparent 1.6px);
+  background-size: 160px 190px, 110px 130px;
+  animation: cena-particulas 40s linear infinite;
+  mix-blend-mode: screen;
+  opacity: .7;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cena-trator, .cena-colheitadeira, .cena-roda, .cena-poeira, .cena-balanca, .cena-sol, .cena-nuvens, .cena-voo, .cena-asa, .cena-particulas { animation: none; }
+  .cena-trator { transform: translateX(520px); }
+}
+
+/* faixa de couro costurado */
+.couro {
+  background-color: var(--l-terra);
+  background-image:
+    radial-gradient(120% 80% at 50% 0%, rgb(255 255 255 / .12), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+.costura::before, .costura::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2px dashed rgb(240 205 140 / .75);
+}
+.costura::before { top: 7px; }
+.costura::after { bottom: 7px; }

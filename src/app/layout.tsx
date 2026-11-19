@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Barlow_Condensed, Inter } from "next/font/google";
+import { Alfa_Slab_One, Barlow_Condensed, Inter, Kaushan_Script } from "next/font/google";
 import { SCRIPT_TEMA } from "@/components/tema";
 import "./globals.css";
 
@@ -9,7 +9,8 @@ const titulo = Barlow_Condensed({
   subsets: ["latin"],
   weight: ["600", "700", "800"],
 });
-const display = Anton({ variable: "--font-anton", subsets: ["latin"], weight: "400" });
+const display = Alfa_Slab_One({ variable: "--font-slab", subsets: ["latin"], weight: "400" });
+const manuscrita = Kaushan_Script({ variable: "--font-manuscrita", subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://insista-estoque.vercel.app"),
@@ -32,7 +33,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${texto.variable} ${titulo.variable} ${display.variable} antialiased`} suppressHydrationWarning>
+    <html lang="pt-BR" className={`${texto.variable} ${titulo.variable} ${display.variable} ${manuscrita.variable} antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
       </head>
