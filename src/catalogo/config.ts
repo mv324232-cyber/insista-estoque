@@ -8,8 +8,12 @@ export const LOJA = {
   whatsappExibicao: "(43) 99836-5037",
   preco: 49.9,
   slogan: "Vista a força do campo.",
-  /** Vídeo de fundo do topo (ex.: "/video/campo.mp4"). Sem vídeo, aparece a cena animada de campo. */
-  videoHero: null as string | null,
+  /** Vídeo de fundo do topo (Mixkit, licença livre). Use null para mostrar só a cena animada de campo. */
+  videoHero: {
+    computador: "/video/campo-1280", // .webm e .mp4
+    celular: "/video/campo-854",
+    capa: "/video/campo-poster.jpg",
+  } as { computador: string; celular: string; capa: string } | null,
 };
 
 export const TAMANHOS_CATALOGO = ["P", "M", "G", "GG"] as const;

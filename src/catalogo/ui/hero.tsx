@@ -9,6 +9,40 @@ import { PRODUTOS } from "../produtos";
 import { CenaCampo } from "./cena-campo";
 import { IconeWhatsapp } from "./icones";
 
+/** Vídeo de máquinas na lavoura. Escolhe a versão pela tela, entra com fade quando
+ *  estiver pronto e é pulado em "economia de dados" ou "movimento reduzido". */
+function VideoFundo() {
+  const reduzir = useReducedMotion();
+  const [src, setSrc] = useState<string | null>(null);
+  const [pronto, setPronto] = useState(false);
+
+  useEffect(() => {
+    const v = LOJA.videoHero;
+    if (!v || reduzir) return;
+    const conexao = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (conexao?.saveData) return;
+    setSrc(window.matchMedia("(min-width: 768px)").matches ? v.computador : v.celular);
+  }, [reduzir]);
+
+  if (!src) return null;
+  return (
+    <video
+      className={`absolute inset-0 size-full object-cover transition-opacity duration-1000 ${pronto ? "opacity-100" : "opacity-0"}`}
+      poster={LOJA.videoHero?.capa}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      onCanPlay={() => setPronto(true)}
+      aria-hidden
+    >
+      <source src={`${src}.webm`} type="video/webm" />
+      <source src={`${src}.mp4`} type="video/mp4" />
+    </video>
+  );
+}
+
 const DESTAQUES = ["09", "64", "14", "02", "57", "11", "51", "98"];
 
 const linha = {
@@ -36,19 +70,10 @@ export function Hero() {
       {/* fundo: vídeo (se configurado) ou cena animada de campo */}
       <motion.div style={{ y: reduzir ? 0 : fundoY }} className="absolute inset-0 -z-20">
         <CenaCampo />
-        {LOJA.videoHero && (
-          <video
-            className="absolute inset-0 size-full object-cover"
-            src={LOJA.videoHero}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            aria-hidden
-          />
-        )}
+        <VideoFundo />
       </motion.div>
+      {/* no celular o texto ocupa a tela toda: escurece um pouco mais */}
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[rgb(24_12_6/0.4)] sm:hidden" />
       {/* sombra quente para dar leitura ao texto */}
       <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgb(30_14_6/0.72)_0%,rgb(30_14_6/0.38)_40%,transparent_62%),linear-gradient(0deg,rgb(24_12_6/0.55)_0%,transparent_30%),linear-gradient(180deg,rgb(24_12_6/0.45)_0%,transparent_22%)]" />
 
